@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "402324506357",
+    "project_id": "meteoras-debug",
+    "storage_bucket": "meteoras-debug.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402324506357:android:fbc598628aa367e38627bc",
+        "android_client_info": {
+          "package_name": "gj.meteoras.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "402324506357-n0ei2go72fc1cao94h6qboh0m2tq9e37.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG3MUk9di_xyj4YftnR0y8B40krB8eunY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "402324506357-n0ei2go72fc1cao94h6qboh0m2tq9e37.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
