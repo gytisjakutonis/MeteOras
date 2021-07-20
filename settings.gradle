@@ -2,3 +2,4 @@ include ':net'
 include ':ext'
 include ':app'
 rootProject.name = "MeteOras"
+include ':data'

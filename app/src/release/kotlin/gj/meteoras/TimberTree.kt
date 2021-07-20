@@ -8,9 +8,11 @@ class TimberTree : Timber.Tree() {
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (priority > Log.DEBUG) {
+            FirebaseCrashlytics.getInstance().log(message)
+
             t?.let {
                 FirebaseCrashlytics.getInstance().recordException(it)
-            } ?: FirebaseCrashlytics.getInstance().log(message)
+            }
         }
     }
 }

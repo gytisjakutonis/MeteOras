@@ -3,15 +3,23 @@ package gj.meteoras
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import gj.meteoras.net.Meteo
+import kotlinx.coroutines.runBlocking
+import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
-    var i: Int = 0
+    var i : Int = 0
+    val meteo : Meteo by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         findViewById<Button>(R.id.log_debug).setOnClickListener {
+            val result = runBlocking {
+                meteo.places()
+            }
+
             Monitor.debug("my debug " + i++)
         }
 

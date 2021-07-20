@@ -6,8 +6,7 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun netModule(baseUrl: String, cacheDir: File) = module {
-
+fun netModule(cacheDir: File) = module {
     single {
         OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
@@ -15,14 +14,6 @@ fun netModule(baseUrl: String, cacheDir: File) = module {
             .readTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
             .cache(Cache(cacheDir, 1024 * 1024 * 10))
-            .build()
-    }
-
-    single {
-        Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(get())
             .build()
     }
 }

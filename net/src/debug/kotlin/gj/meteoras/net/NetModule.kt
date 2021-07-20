@@ -4,13 +4,10 @@ import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-fun netModule(baseUrl: String, cacheDir: File) = module {
-
+fun netModule(cacheDir: File) = module {
     single {
         OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
@@ -25,14 +22,6 @@ fun netModule(baseUrl: String, cacheDir: File) = module {
                     }
                 )
             }
-            .build()
-    }
-
-    single {
-        Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(get())
             .build()
     }
 }
