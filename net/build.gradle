@@ -6,12 +6,13 @@ plugins {
 
 android {
     buildTypes {
-        debug {}
-        release {}
-    }
+        debug {
+            buildConfigField 'String', 'METEO_URL', "\"https://api.meteo.lt/v1/\""
+        }
 
-    buildFeatures {
-        buildConfig false
+        release {
+            buildConfigField 'String', 'METEO_URL', "\"https://api.meteo.lt/v1/\""
+        }
     }
 }
 

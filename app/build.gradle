@@ -30,7 +30,6 @@ android {
             minifyEnabled false
             debuggable true
             zipAlignEnabled false
-            buildConfigField 'String', 'METEO_URL', "\"https://api.meteo.lt/v1/\""
         }
 
         release {
@@ -39,7 +38,6 @@ android {
             zipAlignEnabled true
             versionNameSuffix '-release'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'METEO_URL', "\"https://api.meteo.lt/v1/\""
         }
     }
 }

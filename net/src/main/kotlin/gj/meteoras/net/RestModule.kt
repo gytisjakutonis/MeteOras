@@ -4,10 +4,10 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun restModule(meteoUrl: String) = module {
+val restModule = module {
     single {
         Retrofit.Builder()
-            .baseUrl(meteoUrl)
+            .baseUrl(BuildConfig.METEO_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(get())
             .build()
