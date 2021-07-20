@@ -17,7 +17,7 @@ fun netModule(baseUrl: String, cacheDir: File) = module {
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
-            .cache(Cache(cacheDir, 1024 * 1024 * 10))
+            .cache(Cache(cacheDir, 1024 * 1024 * 10L))
             .apply {
                 addNetworkInterceptor(
                     HttpLoggingInterceptor().apply {
