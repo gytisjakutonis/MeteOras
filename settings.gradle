@@ -1,2 +1,3 @@
+include ':ext'
 include ':app'
 rootProject.name = "MeteOras"
