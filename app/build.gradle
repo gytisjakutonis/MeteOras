@@ -30,6 +30,7 @@ android {
             minifyEnabled false
             debuggable true
             zipAlignEnabled false
+            buildConfigField 'String', 'BACKEND_URL', "\"http://echo.jsontest.com/\""
         }
 
         release {
@@ -38,6 +39,7 @@ android {
             zipAlignEnabled true
             versionNameSuffix '-release'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', 'BACKEND_URL', "\"http://echo.jsontest.com/\""
         }
     }
 }
@@ -45,6 +47,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':ext')
+    implementation project(path: ':net')
 
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'

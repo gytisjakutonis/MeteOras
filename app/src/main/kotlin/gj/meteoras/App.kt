@@ -4,9 +4,11 @@ import android.app.Application
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import gj.meteoras.ext.koin.TimberLogger
+import gj.meteoras.net.netModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import timber.log.Timber
+import java.io.File
 
 class App : Application() {
 
@@ -25,6 +27,7 @@ class App : Application() {
 
             modules(
                 listOf(
+                    netModule(BuildConfig.BACKEND_URL, File(cacheDir, "http"))
                 )
             )
         }
