@@ -4,6 +4,7 @@ import android.app.Application
 import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import gj.meteoras.ext.koin.TimberLogger
+import gj.meteoras.ext.timber.CrashlyticsTree
 import gj.meteoras.net.netModule
 import gj.meteoras.net.restModule
 import org.koin.android.ext.koin.androidContext
@@ -19,7 +20,7 @@ class App : Application() {
         FirebaseApp.initializeApp(this)
         FirebaseCrashlytics.getInstance().sendUnsentReports()
 
-        Timber.plant(TimberTree())
+        Timber.plant(CrashlyticsTree())
 
         startKoin {
             androidContext(this@App)

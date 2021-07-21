@@ -1,9 +1,9 @@
-package gj.meteoras
+package gj.meteoras.ext.timber
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import timber.log.Timber
 
-class TimberTree : Timber.DebugTree() {
+class CrashlyticsTree : Timber.DebugTree() {
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         super.log(priority, tag, message, t)
