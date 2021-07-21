@@ -18,6 +18,11 @@ android {
         versionCode 10
         versionName "1.0"
 
+        Date date = new Date()
+        String today = date.format('yyyyMMdd')
+        String applicationName = "${defaultConfig.applicationId}-${defaultConfig.versionName}-${today}"
+        setProperty("archivesBaseName", applicationName)
+
         multiDexEnabled true
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -26,7 +31,6 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix '.debug'
-            versionNameSuffix '-debug'
             minifyEnabled false
             debuggable true
             zipAlignEnabled false
@@ -36,7 +40,6 @@ android {
             minifyEnabled true
             debuggable false
             zipAlignEnabled true
-            versionNameSuffix '-release'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
