@@ -2,7 +2,9 @@ package gj.meteoras
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import gj.meteoras.db.Database
 import gj.meteoras.net.Meteo
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
@@ -10,6 +12,7 @@ import org.koin.android.ext.android.inject
 class MainActivity : AppCompatActivity() {
     var i : Int = 0
     val meteo : Meteo by inject()
+    val db : Database by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,10 +23,20 @@ class MainActivity : AppCompatActivity() {
                 meteo.places()
             }
 
+            runBlocking {
+                db.places().setAll(result)
+            }
+
             Monitor.debug("my debug " + i++)
         }
 
         findViewById<Button>(R.id.log_info).setOnClickListener {
+            val count = runBlocking {
+                db.places().countAll()
+            }
+
+            Toast.makeText(this, "count=$count", Toast.LENGTH_SHORT).show()
+
             Monitor.info("my info " + i++)
         }
 
