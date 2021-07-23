@@ -7,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 val restModule = module {
     single {
         Retrofit.Builder()
-            .baseUrl(BuildConfig.METEO_URL)
+            .baseUrl(NetConfig.meteoUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .client(get())
             .build()
