@@ -1,5 +1,7 @@
-package gj.meteoras.net
+package gj.meteoras.net.service
 
+import gj.meteoras.net.NetConfig
+import gj.meteoras.net.restModule
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkAll

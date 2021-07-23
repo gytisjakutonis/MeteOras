@@ -5,7 +5,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import gj.meteoras.db.Database
-import gj.meteoras.net.Meteo
+import gj.meteoras.net.service.Meteo
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
