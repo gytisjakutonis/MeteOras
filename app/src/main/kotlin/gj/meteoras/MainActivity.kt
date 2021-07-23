@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             runBlocking {
-                db.places().setAll(result)
+                //db.places().setAll(result)
             }
 
             Monitor.debug("my debug " + i++)
