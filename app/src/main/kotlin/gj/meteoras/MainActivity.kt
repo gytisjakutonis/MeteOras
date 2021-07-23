@@ -5,13 +5,13 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import gj.meteoras.db.Database
-import gj.meteoras.net.service.Meteo
+import gj.meteoras.net.api.MeteoApi
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
     var i : Int = 0
-    val meteo : Meteo by inject()
+    val meteo : MeteoApi by inject()
     val db : Database by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {

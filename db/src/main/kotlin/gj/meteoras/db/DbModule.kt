@@ -9,7 +9,7 @@ val dbModule = module {
         Room.databaseBuilder(
             androidContext(),
             Database::class.java,
-            "gj.meteoras.database"
+            DbConfig.dbName
         ).build()
     }
 }

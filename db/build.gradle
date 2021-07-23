@@ -24,7 +24,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(path: ':data')
 
     // room
     implementation "androidx.room:room-runtime:$room_version"
@@ -33,4 +32,11 @@ dependencies {
 
     // paging
     implementation("androidx.paging:paging-runtime:3.0.0")
+
+    // test
+    testImplementation "androidx.test:core:$testx_version"
+    testImplementation "androidx.test:runner:$testx_version"
+    testImplementation "androidx.test.ext:junit:1.1.3"
+    //testImplementation "androidx.test.ext:truth:$testx_version"
+    testImplementation 'org.robolectric:robolectric:4.2.1'
 }

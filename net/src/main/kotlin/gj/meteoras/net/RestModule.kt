@@ -1,6 +1,6 @@
 package gj.meteoras.net
 
-import gj.meteoras.net.service.Meteo
+import gj.meteoras.net.api.MeteoApi
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -15,6 +15,6 @@ val restModule = module {
     }
 
     single {
-        get<Retrofit>().create(Meteo::class.java)
+        get<Retrofit>().create(MeteoApi::class.java)
     }
 }

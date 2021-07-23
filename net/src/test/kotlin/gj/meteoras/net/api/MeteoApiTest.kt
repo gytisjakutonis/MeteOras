@@ -1,4 +1,4 @@
-package gj.meteoras.net.service
+package gj.meteoras.net.api
 
 import gj.meteoras.net.NetConfig
 import gj.meteoras.net.restModule
@@ -21,10 +21,10 @@ import org.koin.test.KoinTest
 import org.koin.test.KoinTestRule
 import org.koin.test.inject
 
-class MeteoTest : KoinTest {
+class MeteoApiTest : KoinTest {
 
     val server = MockWebServer()
-    val meteo : Meteo by inject()
+    val meteo : MeteoApi by inject()
 
     @get:Rule
     val koinTestRule = KoinTestRule.create {
@@ -45,6 +45,7 @@ class MeteoTest : KoinTest {
 
     @After
     fun after() {
+        server.shutdown()
         unmockkAll()
     }
 

@@ -1,6 +1,6 @@
 package gj.meteoras.net.data
 
-data class Place(
+data class PlaceNet(
     val code : String?,
     val name : String?,
     val administrativeDivision : String? = null,
