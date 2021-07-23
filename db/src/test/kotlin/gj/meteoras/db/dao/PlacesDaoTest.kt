@@ -4,8 +4,8 @@ import androidx.paging.PagingSource
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import gj.meteoras.data.Place
 import gj.meteoras.db.Database
-import gj.meteoras.db.data.PlaceDb
 import io.mockk.unmockkAll
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -56,23 +56,23 @@ class PlacesDaoTest : KoinTest{
     @Test
     fun insertAll() {
         val places = listOf(
-            PlaceDb(
+            Place(
                 code = "code1",
                 name = "name1",
                 countryCode = "countryCode1"
             ),
-            PlaceDb(
+            Place(
                 code = "code2",
                 name = "name1",
                 countryCode = "countryCode1",
                 administrativeDivision = "administrativeDivision2"
             ),
-            PlaceDb(
+            Place(
                 code = "code3",
                 name = "name3",
                 countryCode = "countryCode3",
                 administrativeDivision = "administrativeDivision2",
-                coordinates = PlaceDb.Coordinates(
+                coordinates = Place.Coordinates(
                     latitude = 1.1,
                     longitude = 2.2
                 )
@@ -93,12 +93,12 @@ class PlacesDaoTest : KoinTest{
     @Test
     fun uniqueCode() {
         val places = listOf(
-            PlaceDb(
+            Place(
                 code = "code1",
                 name = "name1",
                 countryCode = "countryCode1"
             ),
-            PlaceDb(
+            Place(
                 code = "code1",
                 name = "name1",
                 countryCode = "countryCode1",
@@ -119,17 +119,17 @@ class PlacesDaoTest : KoinTest{
     @Test
     fun deleteAll() {
         val places = listOf(
-            PlaceDb(
+            Place(
                 code = "code1",
                 name = "name1",
                 countryCode = "countryCode1"
             ),
-            PlaceDb(
+            Place(
                 code = "code2",
                 name = "name1",
                 countryCode = "countryCode1",
             ),
-            PlaceDb(
+            Place(
                 code = "code3",
                 name = "name3",
                 countryCode = "countryCode3",
@@ -160,17 +160,17 @@ class PlacesDaoTest : KoinTest{
     @Test
     fun setAll() {
         val placesBefore = listOf(
-            PlaceDb(
+            Place(
                 code = "code1",
                 name = "name1",
                 countryCode = "countryCode1"
             ),
-            PlaceDb(
+            Place(
                 code = "code2",
                 name = "name1",
                 countryCode = "countryCode1",
             ),
-            PlaceDb(
+            Place(
                 code = "code3",
                 name = "name3",
                 countryCode = "countryCode3",
@@ -178,12 +178,12 @@ class PlacesDaoTest : KoinTest{
         )
 
         val placesAfter = listOf(
-            PlaceDb(
+            Place(
                 code = "code4",
                 name = "name1",
                 countryCode = "countryCode1"
             ),
-            PlaceDb(
+            Place(
                 code = "code5",
                 name = "name1",
                 countryCode = "countryCode1",
@@ -214,27 +214,27 @@ class PlacesDaoTest : KoinTest{
     @Test
     fun findAll() {
         val places = listOf(
-            PlaceDb(
+            Place(
                 code = "code1",
                 name = "abc",
                 countryCode = "countryCode1"
             ),
-            PlaceDb(
+            Place(
                 code = "code2",
                 name = "abcd",
                 countryCode = "countryCode1",
             ),
-            PlaceDb(
+            Place(
                 code = "code3",
                 name = "abcde",
                 countryCode = "countryCode1",
             ),
-            PlaceDb(
+            Place(
                 code = "code4",
                 name = "fgh",
                 countryCode = "countryCode1",
             ),
-            PlaceDb(
+            Place(
                 code = "code5",
                 name = "fghi",
                 countryCode = "countryCode1",
