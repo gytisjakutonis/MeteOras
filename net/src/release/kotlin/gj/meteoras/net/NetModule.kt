@@ -13,7 +13,7 @@ val netModule = module {
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
-            .cache(Cache(get<Context>().cacheDir, 1024 * 1024 * 10L))
+            .cache(Cache(get<Context>().cacheDir, NetConfig.cacheSizeBytes))
             .build()
     }
 }

@@ -7,7 +7,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import gj.meteoras.data.Place
 import gj.meteoras.db.Database
 import io.mockk.unmockkAll
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
@@ -21,11 +26,19 @@ import org.koin.test.KoinTestRule
 import org.koin.test.inject
 import org.robolectric.annotation.Config
 
+@ExperimentalCoroutinesApi
 @Config(sdk = [28])
 @RunWith(AndroidJUnit4::class)
 class PlacesDaoTest : KoinTest{
 
+    // https://medium.com/@eyalg/testing-androidx-room-kotlin-coroutines-2d1faa3e674f
+    // Room DAO transaction functions override threading, so does not work with runBlockingTest
+
     val db : Database by inject()
+
+    // using this rule forces main thread for room, check other comments below
+//    @get:Rule
+//    val executorRule = InstantTaskExecutorRule()
 
     @get:Rule
     val koinTestRule = KoinTestRule.create {
@@ -37,20 +50,30 @@ class PlacesDaoTest : KoinTest{
                     Room.inMemoryDatabaseBuilder(
                         androidContext(),
                         Database::class.java,
-                    ).build()
+                    )
+                        // using main thread blocks runBlocking
+//                        .allowMainThreadQueries()
+//                        .setTransactionExecutor(dispatcher.asExecutor())
+//                        .setQueryExecutor(dispatcher.asExecutor())
+                        .build()
                 }
             }
         )
     }
 
+    val dispatcher = TestCoroutineDispatcher()
+
     @Before
     fun before() {
+        Dispatchers.setMain(dispatcher)
     }
 
     @After
     fun after() {
         db.close()
         unmockkAll()
+        Dispatchers.resetMain()
+        dispatcher.cleanupTestCoroutines()
     }
 
     @Test

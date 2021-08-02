@@ -4,3 +4,4 @@ include ':app'
 rootProject.name = "MeteOras"
 include ':data'
 include ':db'
+include ':repo'

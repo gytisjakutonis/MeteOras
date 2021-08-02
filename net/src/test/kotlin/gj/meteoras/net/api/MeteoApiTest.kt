@@ -1,11 +1,17 @@
 package gj.meteoras.net.api
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import gj.meteoras.net.NetConfig
 import gj.meteoras.net.restModule
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkAll
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -21,10 +27,17 @@ import org.koin.test.KoinTest
 import org.koin.test.KoinTestRule
 import org.koin.test.inject
 
+@ExperimentalCoroutinesApi
 class MeteoApiTest : KoinTest {
+
+    // https://medium.com/@eyalg/testing-androidx-room-kotlin-coroutines-2d1faa3e674f
+    // Retrofit uses OkHttp threading, so does not work with runBlockingTest
 
     val server = MockWebServer()
     val meteo : MeteoApi by inject()
+
+    @get:Rule
+    val executorRule = InstantTaskExecutorRule()
 
     @get:Rule
     val koinTestRule = KoinTestRule.create {
@@ -36,17 +49,22 @@ class MeteoApiTest : KoinTest {
         )
     }
 
+    val dispatcher = TestCoroutineDispatcher()
+
     @Before
     fun before() {
         server.start()
         mockkObject(NetConfig)
         every { NetConfig.meteoUrl } returns server.url("/").toString()
+        Dispatchers.setMain(dispatcher)
     }
 
     @After
     fun after() {
         server.shutdown()
         unmockkAll()
+        Dispatchers.resetMain()
+        dispatcher.cleanupTestCoroutines()
     }
 
     @Test

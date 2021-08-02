@@ -12,4 +12,8 @@ val dbModule = module {
             DbConfig.dbName
         ).build()
     }
+
+    single {
+        get<Database>().places()
+    }
 }

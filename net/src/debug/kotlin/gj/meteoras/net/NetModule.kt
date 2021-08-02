@@ -15,7 +15,7 @@ val netModule = module {
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
-            .cache(Cache(File(get<Context>().cacheDir, "http"), 1024 * 1024 * 10L))
+            .cache(Cache(File(get<Context>().cacheDir, "http"), NetConfig.cacheSizeBytes))
             .apply {
                 addNetworkInterceptor(
                     HttpLoggingInterceptor().apply {

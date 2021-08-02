@@ -1,0 +1,27 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+android {
+    buildTypes {
+        debug {
+            buildConfigField 'String', 'METEO_URL', "\"https://api.meteo.lt/v1/\""
+        }
+
+        release {
+            buildConfigField 'String', 'METEO_URL', "\"https://api.meteo.lt/v1/\""
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(path: ':data')
+    implementation project(path: ':net')
+    implementation project(path: ':db')
+
+    // paging
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+}

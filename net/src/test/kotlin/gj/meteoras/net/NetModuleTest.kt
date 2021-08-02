@@ -7,7 +7,7 @@ import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.check.checkModules
 
-class ModuleTest : KoinTest {
+class NetModuleTest : KoinTest {
 
     @Test
     fun checkKoin() {
