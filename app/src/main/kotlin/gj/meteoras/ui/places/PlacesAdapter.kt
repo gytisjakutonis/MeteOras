@@ -33,5 +33,5 @@ private class PlacesDiff : DiffUtil.ItemCallback<Place>() {
         oldItem.code == newItem.code
 
     override fun areContentsTheSame(oldItem: Place, newItem: Place): Boolean =
-        oldItem == newItem
+            oldItem.id == newItem.id
 }
