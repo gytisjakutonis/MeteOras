@@ -2,60 +2,47 @@ package gj.meteoras
 
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import gj.meteoras.db.Database
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.PagingConfig
+import androidx.recyclerview.widget.RecyclerView
 import gj.meteoras.net.api.MeteoApi
-import kotlinx.coroutines.runBlocking
+import gj.meteoras.repo.places.PlacesRepo
+import gj.meteoras.ui.places.PlacesAdapter
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
-    var i : Int = 0
-    val meteo : MeteoApi by inject()
-    val db : Database by inject()
+    val api: MeteoApi by inject()
+    val repo: PlacesRepo by inject()
+    val adapter: PlacesAdapter by lazy { PlacesAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.log_debug).setOnClickListener {
-            val result = runBlocking {
-                meteo.places()
+        findViewById<RecyclerView>(R.id.recycler).adapter = adapter
+
+        findViewById<Button>(R.id.findA).setOnClickListener {
+            lifecycleScope.launch {
+                val result = api.places()
+
+
+                with(repo) {
+                    lifecycleScope.findPlaces(
+                        "a",
+                        PagingConfig(
+                            pageSize = 5
+                        )
+                    )
+                }.flow.collect { data ->
+                    Timber.d("REPO submit data")
+
+                    adapter.submitData(data)
+                }
             }
-
-            runBlocking {
-                //db.places().setAll(result)
-            }
-
-            Monitor.debug("my debug " + i++)
-        }
-
-        findViewById<Button>(R.id.log_info).setOnClickListener {
-            val count = runBlocking {
-                db.places().countAll()
-            }
-
-            Toast.makeText(this, "count=$count", Toast.LENGTH_SHORT).show()
-
-            Monitor.info("my info " + i++)
-        }
-
-        findViewById<Button>(R.id.log_error).setOnClickListener {
-            Monitor.error("my error" + i++)
-        }
-
-        findViewById<Button>(R.id.error).setOnClickListener {
-            Monitor.error(IllegalArgumentException("my exception " + i++))
-        }
-
-        findViewById<Button>(R.id.crash).setOnClickListener {
-            throw RuntimeException("my crash " + i++)
-        }
-
-        findViewById<Button>(R.id.event).setOnClickListener {
-            Monitor.event("test_event", Bundle().apply {
-                putString("property", "value" + i++)
-            })
         }
     }
 }

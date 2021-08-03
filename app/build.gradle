@@ -28,6 +28,11 @@ android {
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix '.debug'
@@ -50,9 +55,17 @@ dependencies {
     implementation project(path: ':ext')
     implementation project(path: ':net')
     implementation project(path: ':db')
+    implementation project(path: ':data')
+    implementation project(path: ':repo')
 
+    // ui
     implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
+    // room
     implementation "androidx.room:room-runtime:$room_version"
+
+    // paging
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 }

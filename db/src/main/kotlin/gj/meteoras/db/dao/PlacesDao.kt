@@ -10,7 +10,7 @@ interface PlacesDao {
     @Query("SELECT count(*) FROM place")
     suspend fun countAll(): Long
 
-    @Query("SELECT * FROM place where name like :name")
+    @Query("SELECT * FROM place where lower(name) like lower(:name)")
     fun findAll(name: String): PagingSource<Int, Place>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

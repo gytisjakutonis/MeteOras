@@ -8,6 +8,7 @@ import gj.meteoras.ext.koin.TimberLogger
 import gj.meteoras.ext.timber.CrashlyticsTree
 import gj.meteoras.net.netModule
 import gj.meteoras.net.restModule
+import gj.meteoras.repo.repoModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import timber.log.Timber
@@ -31,7 +32,8 @@ class App : Application() {
             modules(
                 netModule,
                 restModule,
-                dbModule
+                dbModule,
+                repoModule
             )
         }
     }
