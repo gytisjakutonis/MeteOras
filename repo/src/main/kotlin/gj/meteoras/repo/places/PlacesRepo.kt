@@ -81,4 +81,3 @@ class PlacesRepo(
         preferences.placesTimestamp = Instant.now()
     }
 }
-
