@@ -2,13 +2,13 @@ package gj.meteoras.ui.places
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import gj.meteoras.data.Place
 import gj.meteoras.databinding.ItemPlaceBinding
 
-class PlacesAdapter() : PagingDataAdapter<Place, PlacesAdapter.ViewHolder>(PlacesDiff()) {
+class PlacesAdapter() : ListAdapter<Place, PlacesAdapter.ViewHolder>(PlacesDiff()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemPlaceBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -33,5 +33,5 @@ private class PlacesDiff : DiffUtil.ItemCallback<Place>() {
         oldItem.code == newItem.code
 
     override fun areContentsTheSame(oldItem: Place, newItem: Place): Boolean =
-            oldItem.id == newItem.id
+        oldItem == newItem
 }

@@ -9,6 +9,7 @@ import gj.meteoras.ext.timber.CrashlyticsTree
 import gj.meteoras.net.netModule
 import gj.meteoras.net.restModule
 import gj.meteoras.repo.repoModule
+import gj.meteoras.ui.uiModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import timber.log.Timber
@@ -33,7 +34,8 @@ class App : Application() {
                 netModule,
                 restModule,
                 dbModule,
-                repoModule
+                repoModule,
+                uiModule
             )
         }
     }

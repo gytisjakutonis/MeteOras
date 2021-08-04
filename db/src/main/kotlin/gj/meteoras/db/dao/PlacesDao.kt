@@ -1,6 +1,5 @@
 package gj.meteoras.db.dao
 
-import androidx.paging.PagingSource
 import androidx.room.*
 import gj.meteoras.data.Place
 
@@ -11,7 +10,7 @@ interface PlacesDao {
     suspend fun countAll(): Long
 
     @Query("SELECT * FROM place where lower(name) like lower(:name)")
-    fun findAll(name: String): PagingSource<Int, Place>
+    suspend fun findByName(name: String): List<Place>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(places: List<Place>)

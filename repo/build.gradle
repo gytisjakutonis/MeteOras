@@ -22,7 +22,4 @@ dependencies {
     implementation project(path: ':data')
     implementation project(path: ':net')
     implementation project(path: ':db')
-
-    // paging
-    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 }

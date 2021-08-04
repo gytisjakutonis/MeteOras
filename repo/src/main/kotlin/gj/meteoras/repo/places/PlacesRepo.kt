@@ -1,14 +1,16 @@
 package gj.meteoras.repo.places
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import gj.meteoras.data.Place
 import gj.meteoras.db.dao.PlacesDao
+import gj.meteoras.ext.coroutines.then
 import gj.meteoras.ext.lang.timber
 import gj.meteoras.net.api.MeteoApi
 import gj.meteoras.repo.RepoConfig
 import gj.meteoras.repo.RepoPreferences
+import gj.meteoras.repo.RepoResult
+import gj.meteoras.repo.tryResult
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
 import timber.log.Timber
 import java.time.Duration
 import java.time.Instant
@@ -21,21 +23,7 @@ class PlacesRepo(
 
     private var loadJob: Job? = null
 
-    fun CoroutineScope.findPlaces(
-        nameStartsWith: String,
-        config: PagingConfig
-    ): Pager<Int, Place> {
-
-        syncPlaces()?.invokeOnCompletion { error ->
-            error?.timber()
-        }
-
-        return Pager(
-            config = config
-        ) {
-            dao.findAll("$nameStartsWith%")
-        }
-    }
+    fun filter() = Filter()
 
     @Synchronized
     fun CoroutineScope.syncPlaces(): Job? {
@@ -48,8 +36,10 @@ class PlacesRepo(
             are designed to be non-blocking and should not have side-effects of launching any concurrent work.
             Suspending functions can and should wait for all their work to complete before returning to the caller³.
             */
-            loadJob = async(Dispatchers.IO) {
+            loadJob = launch(Dispatchers.IO) {
                 loadPlaces()
+            }.then { error ->
+                error?.timber()
             }
         }
 
@@ -79,5 +69,28 @@ class PlacesRepo(
         Timber.d("Cached ${placesDao.size} places into db")
 
         preferences.placesTimestamp = Instant.now()
+    }
+
+    inner class Filter {
+
+        val flow = MutableStateFlow<RepoResult<List<Place>>>(RepoResult.None)
+
+        suspend fun filterByName(name: String) {
+            flow.emit(RepoResult.Busy)
+
+            val result = tryResult {
+                /*
+                https://www.netguru.com/blog/exceptions-in-kotlin-coroutines
+                sub-scope to handle errors
+                 */
+                coroutineScope {
+                    syncPlaces()?.join()
+                }
+
+                dao.findByName("$name%")
+            }
+
+            flow.emit(result)
+        }
     }
 }
