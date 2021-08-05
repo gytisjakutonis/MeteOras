@@ -10,10 +10,10 @@ val netModule = module {
     single {
         OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
-            .callTimeout(10, TimeUnit.SECONDS)
-            .connectTimeout(5, TimeUnit.SECONDS)
-            .readTimeout(5, TimeUnit.SECONDS)
-            .writeTimeout(5, TimeUnit.SECONDS)
+            .callTimeout(NetConfig.httpCallTimeout)
+            .connectTimeout(NetConfig.httpTimeout)
+            .readTimeout(NetConfig.httpTimeout)
+            .writeTimeout(NetConfig.httpTimeout)
             .cache(Cache(get<Context>().cacheDir, NetConfig.cacheSizeBytes))
             .build()
     }

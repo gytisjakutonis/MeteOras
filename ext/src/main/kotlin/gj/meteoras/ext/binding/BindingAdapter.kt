@@ -5,6 +5,8 @@ import android.widget.TextView
 import androidx.core.view.isInvisible
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 
 @BindingAdapter("visible")
 fun View.setVisible(visible: Boolean?) {
@@ -28,4 +30,9 @@ fun TextView.setTextChangedListener(listener: TextChangedListener) {
             }
         }
     )
+}
+
+@BindingAdapter("listItems")
+fun RecyclerView.setListItems(items: List<Any>?) {
+    (adapter as? ListAdapter<Any, *>)?.submitList(items)
 }

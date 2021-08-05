@@ -6,16 +6,15 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 val netModule = module {
     single {
         OkHttpClient.Builder()
             .retryOnConnectionFailure(true)
-            .callTimeout(10, TimeUnit.SECONDS)
-            .connectTimeout(5, TimeUnit.SECONDS)
-            .readTimeout(5, TimeUnit.SECONDS)
-            .writeTimeout(5, TimeUnit.SECONDS)
+            .callTimeout(NetConfig.httpCallTimeout)
+            .connectTimeout(NetConfig.httpTimeout)
+            .readTimeout(NetConfig.httpTimeout)
+            .writeTimeout(NetConfig.httpTimeout)
             .cache(Cache(File(get<Context>().cacheDir, "http"), NetConfig.cacheSizeBytes))
             .apply {
                 addNetworkInterceptor(

@@ -5,20 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import gj.meteoras.data.Place
-import gj.meteoras.repo.RepoResult
-import gj.meteoras.repo.busy
-import gj.meteoras.repo.data
-import gj.meteoras.repo.error
 import gj.meteoras.repo.places.PlacesRepo
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
-@FlowPreview
-@ExperimentalCoroutinesApi
 class PlacesViewModel(
     private val repo: PlacesRepo
 ) : ViewModel() {
@@ -28,6 +21,7 @@ class PlacesViewModel(
     // flow backed livedata, so we can emit states from non-main thread
     val state: LiveData<PlacesViewState> = stateFlow.asLiveData(Dispatchers.Default)
     val actions = MutableSharedFlow<PlacesViewAction>(
+        replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
@@ -36,12 +30,11 @@ class PlacesViewModel(
             nameFilter
                 .debounce(filterDelayMillis)
                 .distinctUntilChanged()
-                .flatMapLatest { name ->
-                    repo.filterByName(name)
-                }
                 // https://medium.com/mobile-app-development-publication/kotlin-flow-buffer-is-like-a-fashion-adoption-31630a9cdb00
-                .collectLatest { result ->
-                    result.handle()
+                .collectLatest { name ->
+                    work {
+                        repo.filterByName(name).handle()
+                    }
                 }
         }
     }
@@ -56,17 +49,46 @@ class PlacesViewModel(
         filter(nameFilter.value)
     }
 
-    private suspend fun RepoResult<List<Place>>.handle() {
-        stateFlow.emit(
-            stateFlow.value.copy(
-                places = data ?: stateFlow.value.places,
-                busy = busy,
-            )
-        )
+    private suspend fun Result<List<Place>>.handle() {
+        Timber.d("VM result $this")
 
-        error?.let {
+        stateFlow.value.copy(
+            places = getOrNull() ?: stateFlow.value.places,
+        ).emit()
 
+        exceptionOrNull()?.translate()?.let { error ->
+            PlacesViewAction.ShowMessage(
+                message = error,
+                action = "Retry"
+            ) {
+                retry()
+            }.emit()
         }
+    }
+
+    private suspend fun work(block: suspend () -> Unit) {
+        try {
+            busy()
+            block()
+        } finally {
+            idle()
+        }
+    }
+
+    private suspend fun busy(busy: Boolean = true) {
+        stateFlow.value.copy(busy = busy).emit()
+    }
+
+    private suspend fun idle() {
+        busy(false)
+    }
+
+    private suspend fun PlacesViewState.emit() {
+        stateFlow.emit(this)
+    }
+
+    private suspend fun PlacesViewAction.emit() {
+        actions.emit(this)
     }
 
     private fun Throwable.translate(): String =

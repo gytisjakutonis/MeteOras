@@ -2,20 +2,18 @@ package gj.meteoras.repo.places
 
 import gj.meteoras.data.Place
 import gj.meteoras.db.dao.PlacesDao
-import gj.meteoras.ext.coroutines.then
+import gj.meteoras.ext.lang.runCatchingCancelable
 import gj.meteoras.ext.lang.timber
 import gj.meteoras.net.api.MeteoApi
 import gj.meteoras.repo.RepoConfig
 import gj.meteoras.repo.RepoPreferences
-import gj.meteoras.repo.RepoResult
-import gj.meteoras.repo.tryResult
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
 import java.time.Duration
 import java.time.Instant
+import java.util.concurrent.TimeoutException
+import kotlin.time.ExperimentalTime
+import kotlin.time.toKotlinDuration
 
 class PlacesRepo(
     private val preferences: RepoPreferences,
@@ -23,47 +21,33 @@ class PlacesRepo(
     private val api: MeteoApi
 ) {
 
-    private var loadJob: Job? = null
+    // last resort handler to avoid app crash
+    private val handler = CoroutineExceptionHandler { _, throwable ->
+        Timber.e(throwable, "Unhandled error!")
+    }
+    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob() + handler)
+    private var loader: Deferred<Unit>? = null
 
-    fun filterByName(name: String): Flow<RepoResult<List<Place>>> = flow {
-        emit(RepoResult.Busy)
+    suspend fun filterByName(name: String): Result<List<Place>> = runCatchingCancelable {
+        syncPlaces()?.await()
+        delay(5000L)
+        dao.findByName("$name%")
+    }.also { result ->
+        result.exceptionOrNull()?.timber()
+    }
 
-        val result = tryResult {
-            /*
-            https://www.netguru.com/blog/exceptions-in-kotlin-coroutines
-            sub-scope to handle errors
-             */
-            coroutineScope {
-                syncPlaces()?.join()
-            }
-
-            delay(5000L)
-
-            dao.findByName("$name%")
-        }
-
-        emit(result)
-    }.flowOn(Dispatchers.Default)
-
+    // creates job instead on simple suspend, in order to avoid multiple sync running in parallel
     @Synchronized
-    fun CoroutineScope.syncPlaces(): Job? {
+    fun syncPlaces(): Deferred<Unit>? {
         if (checkPlacesValid()) {
             return null
-        } else if (loadJob?.isActive != true) {
-            /*
-            https://elizarov.medium.com/coroutine-context-and-scope-c8b255d59055
-            Suspending functions, on the other hand,
-            are designed to be non-blocking and should not have side-effects of launching any concurrent work.
-            Suspending functions can and should wait for all their work to complete before returning to the caller³.
-            */
-            loadJob = launch(Dispatchers.IO) {
+        } else if (loader?.isActive != true) {
+            loader = scope.async {
                 loadPlaces()
-            }.then { error ->
-                error?.timber()
             }
         }
 
-        return loadJob
+        return loader
     }
 
     private fun checkPlacesValid(): Boolean {
@@ -71,15 +55,19 @@ class PlacesRepo(
         val lastLoad = preferences.placesTimestamp
         val duration = Duration.between(lastLoad, now)
 
-        return duration.seconds < RepoConfig.placesExpirySeconds
+        return duration < RepoConfig.placesTimeout
     }
 
+    @OptIn(ExperimentalTime::class)
     private suspend fun loadPlaces() {
-        delay(10000L)
+        Timber.d("Api loading")
 
-        val placesNet = withTimeout(RepoConfig.apiTimeoutMillis) {
+        //delay(10000L)
+
+        // workaround for TimeoutCancellationException not being propagated to outer scope
+        val placesNet = withTimeoutOrNull(RepoConfig.apiTimeout.toKotlinDuration()) {
             api.places()
-        }
+        } ?: throw TimeoutException()
 
         Timber.d("Loaded ${placesNet.size} places from api")
 

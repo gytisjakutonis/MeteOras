@@ -1,0 +1,7 @@
+https://elizarov.medium.com/coroutine-context-and-scope-c8b255d59055
+Suspending functions, on the other hand,
+are designed to be non-blocking and should not have side-effects of launching any concurrent work.
+Suspending functions can and should wait for all their work to complete before returning to the caller³.
+
+https://www.netguru.com/blog/exceptions-in-kotlin-coroutines
+sub-scope to handle errors
