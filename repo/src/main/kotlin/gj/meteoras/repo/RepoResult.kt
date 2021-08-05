@@ -5,12 +5,8 @@ import java.util.concurrent.CancellationException
 sealed class RepoResult<out T> {
 
     data class Error(val error: Throwable) : RepoResult<Nothing>()
-
     data class Success<out T>(val data: T) : RepoResult<T>()
-
     object Busy : RepoResult<Nothing>()
-
-    object None : RepoResult<Nothing>()
 }
 
 val <T> RepoResult<T>.data: T? get() = (this as? RepoResult.Success)?.data

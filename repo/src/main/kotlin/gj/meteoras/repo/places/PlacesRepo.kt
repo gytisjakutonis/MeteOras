@@ -10,7 +10,9 @@ import gj.meteoras.repo.RepoPreferences
 import gj.meteoras.repo.RepoResult
 import gj.meteoras.repo.tryResult
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
 import java.time.Duration
 import java.time.Instant
@@ -23,7 +25,25 @@ class PlacesRepo(
 
     private var loadJob: Job? = null
 
-    fun filterByName(name: String) = Filter()
+    fun filterByName(name: String): Flow<RepoResult<List<Place>>> = flow {
+        emit(RepoResult.Busy)
+
+        val result = tryResult {
+            /*
+            https://www.netguru.com/blog/exceptions-in-kotlin-coroutines
+            sub-scope to handle errors
+             */
+            coroutineScope {
+                syncPlaces()?.join()
+            }
+
+            delay(5000L)
+
+            dao.findByName("$name%")
+        }
+
+        emit(result)
+    }.flowOn(Dispatchers.Default)
 
     @Synchronized
     fun CoroutineScope.syncPlaces(): Job? {
@@ -55,7 +75,7 @@ class PlacesRepo(
     }
 
     private suspend fun loadPlaces() {
-        delay(5000L)
+        delay(10000L)
 
         val placesNet = withTimeout(RepoConfig.apiTimeoutMillis) {
             api.places()
@@ -69,28 +89,5 @@ class PlacesRepo(
         Timber.d("Cached ${placesDao.size} places into db")
 
         preferences.placesTimestamp = Instant.now()
-    }
-
-    inner class Filter {
-
-        val flow = MutableStateFlow<RepoResult<List<Place>>>(RepoResult.None)
-
-        suspend fun filterByName(name: String) {
-            flow.emit(RepoResult.Busy)
-
-            val result = tryResult {
-                /*
-                https://www.netguru.com/blog/exceptions-in-kotlin-coroutines
-                sub-scope to handle errors
-                 */
-                coroutineScope {
-                    syncPlaces()?.join()
-                }
-
-                dao.findByName("$name%")
-            }
-
-            flow.emit(result)
-        }
     }
 }

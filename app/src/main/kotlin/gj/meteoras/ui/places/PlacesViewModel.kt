@@ -4,46 +4,44 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import gj.meteoras.data.Place
+import gj.meteoras.repo.RepoResult
+import gj.meteoras.repo.busy
+import gj.meteoras.repo.data
+import gj.meteoras.repo.error
 import gj.meteoras.repo.places.PlacesRepo
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class PlacesViewModel(
     private val repo: PlacesRepo
 ) : ViewModel() {
 
     private val nameFilter = MutableStateFlow("")
-    private val repoFilter = repo.filter()
     private val stateFlow = MutableStateFlow(PlacesViewState())
     // flow backed livedata, so we can emit states from non-main thread
     val state: LiveData<PlacesViewState> = stateFlow.asLiveData(Dispatchers.Default)
-    val actions = MutableStateFlow<PlacesViewAction>(PlacesViewAction.None)
+    val actions = MutableSharedFlow<PlacesViewAction>(
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
 
     init {
         viewModelScope.launch(Dispatchers.Default) {
             nameFilter
                 .debounce(filterDelayMillis)
                 .distinctUntilChanged()
-                .collect { name ->
-                    repoFilter.filterByName(name)
+                .flatMapLatest { name ->
+                    repo.filterByName(name)
                 }
-        }
-
-        viewModelScope.launch(Dispatchers.Default) {
-            repoFilter.flow
-                .collect { result ->
-                    stateFlow.emit(
-                        stateFlow.value.copy(
-                            places = result.data ?: stateFlow.value.places,
-                            busy = result.busy,
-                        )
-                    )
-
-
+                // https://medium.com/mobile-app-development-publication/kotlin-flow-buffer-is-like-a-fashion-adoption-31630a9cdb00
+                .collectLatest { result ->
+                    result.handle()
                 }
         }
     }
@@ -55,8 +53,19 @@ class PlacesViewModel(
     }
 
     fun retry() {
-        viewModelScope.launch(Dispatchers.Default) {
-            repoFilter.filterByName(nameFilter.value)
+        filter(nameFilter.value)
+    }
+
+    private suspend fun RepoResult<List<Place>>.handle() {
+        stateFlow.emit(
+            stateFlow.value.copy(
+                places = data ?: stateFlow.value.places,
+                busy = busy,
+            )
+        )
+
+        error?.let {
+
         }
     }
 

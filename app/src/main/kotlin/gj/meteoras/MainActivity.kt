@@ -1,7 +1,6 @@
 package gj.meteoras
 
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import gj.meteoras.ui.places.PlacesAdapter
@@ -27,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun PlacesViewState.render() {
-        findViewById<TextView>(R.id.text).text = error ?: if (loading) "busy..." else null
+        //findViewById<TextView>(R.id.text).text = error ?: if (loading) "busy..." else null
         adapter.submitList(places)
     }
 }
