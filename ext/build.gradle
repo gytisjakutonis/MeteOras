@@ -13,6 +13,11 @@ android {
     buildFeatures {
         buildConfig false
     }
+
+    buildFeatures {
+        dataBinding true
+        viewBinding true
+    }
 }
 
 dependencies {

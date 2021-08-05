@@ -4,9 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import gj.meteoras.repo.busy
-import gj.meteoras.repo.data
-import gj.meteoras.repo.error
 import gj.meteoras.repo.places.PlacesRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +19,9 @@ class PlacesViewModel(
     private val nameFilter = MutableStateFlow("")
     private val repoFilter = repo.filter()
     private val stateFlow = MutableStateFlow(PlacesViewState())
-
+    // flow backed livedata, so we can emit states from non-main thread
     val state: LiveData<PlacesViewState> = stateFlow.asLiveData(Dispatchers.Default)
+    val actions = MutableStateFlow<PlacesViewAction>(PlacesViewAction.None)
 
     init {
         viewModelScope.launch(Dispatchers.Default) {
@@ -41,10 +39,11 @@ class PlacesViewModel(
                     stateFlow.emit(
                         stateFlow.value.copy(
                             places = result.data ?: stateFlow.value.places,
-                            loading = result.busy,
-                            error = result.error?.translate()
+                            busy = result.busy,
                         )
                     )
+
+
                 }
         }
     }

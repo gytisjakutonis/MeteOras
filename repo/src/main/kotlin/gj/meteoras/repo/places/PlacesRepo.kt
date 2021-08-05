@@ -23,7 +23,7 @@ class PlacesRepo(
 
     private var loadJob: Job? = null
 
-    fun filter() = Filter()
+    fun filterByName(name: String) = Filter()
 
     @Synchronized
     fun CoroutineScope.syncPlaces(): Job? {
