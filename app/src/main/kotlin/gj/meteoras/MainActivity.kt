@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import gj.meteoras.databinding.ActivityMainBinding
+import gj.meteoras.ext.widget.DrawableLocation
+import gj.meteoras.ext.widget.setDrawableOnTouchListener
 import gj.meteoras.ui.places.PlacesAdapter
 import gj.meteoras.ui.places.PlacesViewModel
 import gj.meteoras.ui.places.PlacesViewState
@@ -33,8 +35,23 @@ class MainActivity : AppCompatActivity() {
         model.state.observe(this) { state ->
             state.render()
         }
+
+        binding.filter.setDrawableOnTouchListener { _, _, location ->
+            if (location == DrawableLocation.Right) {
+                binding.filter.text = null
+                true
+            } else {
+                false
+            }
+        }
     }
 
     private fun PlacesViewState.render() {
+        binding.filter.setCompoundDrawablesWithIntrinsicBounds(
+            R.drawable.ic_magnify_grey,
+            0,
+            if (clear) R.drawable.ic_close_grey else 0,
+            0
+        )
     }
 }

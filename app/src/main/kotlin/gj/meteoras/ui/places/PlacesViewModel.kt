@@ -28,6 +28,11 @@ class PlacesViewModel(
     init {
         viewModelScope.launch(Dispatchers.Default) {
             nameFilter
+                .onEach { name ->
+                    stateFlow.value.copy(
+                        filter = name
+                    ).emit()
+                }
                 .debounce(filterDelayMillis)
                 .distinctUntilChanged()
                 // https://medium.com/mobile-app-development-publication/kotlin-flow-buffer-is-like-a-fashion-adoption-31630a9cdb00

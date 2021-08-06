@@ -16,6 +16,7 @@
 
         <EditText
             android:id="@+id/filter"
+            android:singleLine="true"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:onTextChanged="@{(text) -> viewModel.filter(text)}"

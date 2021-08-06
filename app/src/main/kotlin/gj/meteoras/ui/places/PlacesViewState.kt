@@ -5,4 +5,7 @@ import gj.meteoras.data.Place
 data class PlacesViewState(
     val places: List<Place> = emptyList(),
     val busy: Boolean = false,
-)
+    val filter: String? = null,
+) {
+    val clear: Boolean get() = filter.isNullOrEmpty().not()
+}

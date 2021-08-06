@@ -2,6 +2,7 @@ package gj.meteoras.ext.binding
 
 import android.view.View
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.BindingAdapter
@@ -35,4 +36,18 @@ fun TextView.setTextChangedListener(listener: TextChangedListener) {
 @BindingAdapter("listItems")
 fun RecyclerView.setListItems(items: List<Any>?) {
     (adapter as? ListAdapter<Any, *>)?.submitList(items)
+}
+
+@BindingAdapter("icons")
+fun TextView.setIcons(icons: Array<Int?>?) {
+    val drawables = icons?.map { icon ->
+        icon?.let { ContextCompat.getDrawable(context, it) }
+    } ?: listOf(null, null, null, null)
+
+    setCompoundDrawablesWithIntrinsicBounds(
+        drawables[0],
+        drawables[1],
+        drawables[2],
+        drawables[3],
+    )
 }

@@ -30,7 +30,6 @@ class PlacesRepo(
 
     suspend fun filterByName(name: String): Result<List<Place>> = runCatchingCancelable {
         syncPlaces()?.await()
-        delay(5000L)
         dao.findByName("$name%")
     }.also { result ->
         result.exceptionOrNull()?.timber()
@@ -60,10 +59,6 @@ class PlacesRepo(
 
     @OptIn(ExperimentalTime::class)
     private suspend fun loadPlaces() {
-        Timber.d("Api loading")
-
-        //delay(10000L)
-
         // workaround for TimeoutCancellationException not being propagated to outer scope
         val placesNet = withTimeoutOrNull(RepoConfig.apiTimeout.toKotlinDuration()) {
             api.places()
