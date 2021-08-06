@@ -35,7 +35,9 @@ fun TextView.setTextChangedListener(listener: TextChangedListener) {
 
 @BindingAdapter("listItems")
 fun RecyclerView.setListItems(items: List<Any>?) {
-    (adapter as? ListAdapter<Any, *>)?.submitList(items)
+    (adapter as? ListAdapter<Any, *>)?.submitList(items) {
+        scrollToPosition(0)
+    }
 }
 
 @BindingAdapter("icons")

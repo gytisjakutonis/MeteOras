@@ -18,7 +18,7 @@ class PlacesAdapter() : ListAdapter<Place, PlacesAdapter.ViewHolder>(PlacesDiff(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         holder.binding.apply {
-            name.text = item?.name
+            name.text = "${item.name} (${item.administrativeDivision ?: ""}) ${item.countryCode}"
         }
     }
 

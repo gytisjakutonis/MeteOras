@@ -12,26 +12,25 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="@style/Places.Container">
+        style="@style/Container.Places">
 
         <EditText
             android:id="@+id/filter"
-            android:singleLine="true"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:onTextChanged="@{(text) -> viewModel.filter(text)}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/progress" />
+            app:layout_constraintEnd_toEndOf="parent"
+            style="@style/Text.Filter.Places" />
 
         <ProgressBar
             android:id="@+id/progress"
-            style="@style/Places.Progress"
+            style="@style/Progress.Infinite.Places"
             app:visible="@{viewModel.state.busy}"
-            app:layout_constraintTop_toTopOf="@id/filter"
-            app:layout_constraintBottom_toBottomOf="@id/filter"
+            app:layout_constraintTop_toTopOf="@id/recycler"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/filter" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"

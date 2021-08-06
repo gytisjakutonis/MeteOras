@@ -1,8 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Base.Container" parent="">
+    <style name="Container" parent="">
         <item name="android:padding">@dimen/spacing_screen</item>
     </style>
+
+    <style name="Progress.Infinite" parent="">
+        <item name="android:layout_width">20dp</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:indeterminate">true</item>
+    </style>
+
+    <style name="Text.Item" parent="">
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">@dimen/font_medium</item>
+    </style>
+
+    <style name="Text.Filter" parent="">
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="Separator.Item" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginTop">@dimen/spacing_vertical</item>
+        <item name="android:layout_marginBottom">@dimen/spacing_vertical</item>
+        <item name="android:background">@color/grey</item>
+    </style>
+
 
 </resources>

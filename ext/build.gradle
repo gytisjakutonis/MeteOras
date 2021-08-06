@@ -22,4 +22,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // ui
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
 }

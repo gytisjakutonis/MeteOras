@@ -1,6 +1,7 @@
 package gj.meteoras
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import gj.meteoras.databinding.ActivityMainBinding
@@ -30,11 +31,11 @@ class MainActivity : AppCompatActivity() {
             binding.viewModel = model
         }
 
-        binding.recycler.adapter = adapter
+        setTitle("Find a Place")
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
 
-        model.state.observe(this) { state ->
-            state.render()
-        }
+        binding.recycler.adapter = adapter
 
         binding.filter.setDrawableOnTouchListener { _, _, location ->
             if (location == DrawableLocation.Right) {
@@ -44,6 +45,18 @@ class MainActivity : AppCompatActivity() {
                 false
             }
         }
+
+        model.state.observe(this) { state ->
+            state.render()
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        android.R.id.home -> {
+            onBackPressed()
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
     private fun PlacesViewState.render() {
