@@ -1,7 +1,6 @@
 package gj.meteoras
 
 import android.app.Application
-import com.google.firebase.FirebaseApp
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import gj.meteoras.db.dbModule
 import gj.meteoras.ext.koin.TimberLogger
@@ -20,7 +19,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        FirebaseApp.initializeApp(this)
+        //  FirebaseApp.initializeApp(this)
         FirebaseCrashlytics.getInstance().sendUnsentReports()
 
         Timber.plant(CrashlyticsTree())

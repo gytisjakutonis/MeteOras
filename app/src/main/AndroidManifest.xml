@@ -10,6 +10,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MeteOras">
+
+        <provider
+            android:name="com.google.firebase.provider.FirebaseInitProvider"
+            android:authorities="${applicationId}.firebaseinitprovider"
+            android:exported="false" />
+
         <activity
             android:name=".ui.places.PlacesActivity"
             android:exported="true">
