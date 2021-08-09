@@ -11,10 +11,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
@@ -68,10 +65,20 @@ class PlacesActivity : ComponentActivity() {
                     .padding(5.dp)
                     .fillMaxWidth()
             ) {
+//                val infiniteTransition = rememberInfiniteTransition()
+//                val angle by infiniteTransition.animateFloat(
+//                    initialValue = 0f,
+//                    targetValue = 90f,
+//                    animationSpec = infiniteRepeatable(
+//                        animation = keyframes { durationMillis = 1000 },
+//                        repeatMode = RepeatMode.Reverse
+//                    )
+//                )
+
                 Icon(
                     Icons.Filled.Search,
                     contentDescription = null,
-                    tint = Color.LightGray
+                    tint = Color.LightGray,
                 )
 
                 Spacer(modifier = Modifier.size(5.dp))
@@ -85,7 +92,7 @@ class PlacesActivity : ComponentActivity() {
                         ) {
                             Text(
                                 text = "Search",
-                                color = Color.LightGray
+                                color = Color.LightGray,
                             )
                         }
                     }
@@ -95,8 +102,8 @@ class PlacesActivity : ComponentActivity() {
                         onValueChange = onValueChange,
                         maxLines = 1,
                         singleLine = true,
-                        textStyle = TextStyle(color = Color.Black),
-                        cursorBrush = SolidColor(Color.DarkGray),
+                        textStyle = TextStyle(color = MaterialTheme.colors.primary),
+                        cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
                     )
                 }
 
