@@ -5,6 +5,6 @@ sealed class PlacesViewAction {
     data class ShowMessage(
         val message: String,
         val action: String,
-        val callback: () -> Unit
+        val callback: () -> Unit = { }
     ) : PlacesViewAction()
 }

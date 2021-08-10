@@ -57,6 +57,12 @@ class PlacesActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        model.resume()
+    }
+
     @Composable
     private fun ViewState(state: PlacesViewState?) {
         Column(

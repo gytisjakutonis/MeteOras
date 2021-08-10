@@ -4,19 +4,26 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import gj.meteoras.data.Place
 import gj.meteoras.repo.places.PlacesRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class PlacesViewModel(
     private val repo: PlacesRepo
 ) : ViewModel() {
 
-    private val nameFilter = MutableStateFlow("")
+    private val nameFilter = MutableStateFlow(Name(""))
     private val stateFlow = MutableStateFlow(PlacesViewState())
     // flow backed livedata, so we can emit states from non-main thread
     val state: LiveData<PlacesViewState> = stateFlow.asLiveData(Dispatchers.Default)
@@ -28,56 +35,56 @@ class PlacesViewModel(
     init {
         viewModelScope.launch(Dispatchers.Default) {
             nameFilter
-                .onEach { name ->
-                    stateFlow.value.copy(
-                        filter = name
-                    ).emit()
+                .debounce { name ->
+                    if (name.forced) Duration.ZERO else filterDelay
                 }
-                .debounce(filterDelayMillis)
-                .distinctUntilChanged()
+                .distinctUntilChanged { old, new ->
+                    if (new.forced) false else old == new
+                }
                 // https://medium.com/mobile-app-development-publication/kotlin-flow-buffer-is-like-a-fashion-adoption-31630a9cdb00
                 .collectLatest { name ->
-                    work {
-                        repo.filterByName(name).handle()
+                    stateFlow.value.copy(filter = name.value).emit()
+
+                    repo.filterByName(name.value).onSuccess { value ->
+                        stateFlow.value.copy(places = value).emit()
                     }
                 }
         }
     }
 
+    fun resume() {
+        viewModelScope.launch {
+            Dispatchers.Default.invoke {
+                work {
+                    delay(5000)
+                    repo.syncPlaces()
+                }
+            }.onSuccess { result ->
+                if (result) {
+                    nameFilter.emit(Name(value = stateFlow.value.filter, forced = true))
+                }
+            }.onFailure { error ->
+                PlacesViewAction.ShowMessage(
+                    message = error.translate(),
+                    action = "Retry"
+                ) {
+                    resume()
+                }.emit()
+            }
+        }
+    }
+
     fun filter(name: String) {
         viewModelScope.launch(Dispatchers.Default) {
-            nameFilter.emit(name)
+            nameFilter.emit(Name(value = name))
         }
     }
 
-    fun retry() {
-        filter(nameFilter.value)
-    }
-
-    private suspend fun Result<List<Place>>.handle() {
-        Timber.d("VM result $this")
-
-        stateFlow.value.copy(
-            places = getOrNull() ?: stateFlow.value.places,
-        ).emit()
-
-        exceptionOrNull()?.translate()?.let { error ->
-            PlacesViewAction.ShowMessage(
-                message = error,
-                action = "Retry"
-            ) {
-                retry()
-            }.emit()
-        }
-    }
-
-    private suspend fun work(block: suspend () -> Unit) {
-        try {
-            busy()
-            block()
-        } finally {
-            idle()
-        }
+    private suspend fun <T> work(block: suspend () -> T): T = try {
+        busy()
+        block()
+    } finally {
+        idle()
     }
 
     private suspend fun busy(busy: Boolean = true) {
@@ -97,7 +104,10 @@ class PlacesViewModel(
     }
 
     private fun Throwable.translate(): String =
-        "Something wrong. Check network and retry"
+        "Something wrong. Check network"
 }
 
-private const val filterDelayMillis = 200L
+@ExperimentalTime
+private val filterDelay = Duration.milliseconds(200L)
+
+private data class Name(val value: String, val forced: Boolean = false)

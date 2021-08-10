@@ -6,6 +6,4 @@ data class PlacesViewState(
     val places: List<Place> = emptyList(),
     val busy: Boolean = false,
     val filter: String = "",
-) {
-    val clear: Boolean get() = filter.isNotEmpty()
-}
+)
