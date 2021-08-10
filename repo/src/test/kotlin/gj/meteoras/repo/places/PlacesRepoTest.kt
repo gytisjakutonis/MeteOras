@@ -1,20 +1,12 @@
 package gj.meteoras.repo.places
 
-import androidx.paging.PagingConfig
-import androidx.paging.PagingSource
-import gj.meteoras.data.Place
 import gj.meteoras.db.dao.PlacesDao
 import gj.meteoras.net.api.MeteoApi
 import gj.meteoras.repo.RepoConfig
 import gj.meteoras.repo.RepoPreferences
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -39,9 +31,6 @@ class PlacesRepoTest : KoinTest {
 
     @MockK
     private lateinit var repoPreferences: RepoPreferences
-
-    @MockK
-    private lateinit var pagingSource: PagingSource<Int, Place>
 
     @get:Rule
     val koinTestRule = KoinTestRule.create {
@@ -78,93 +67,51 @@ class PlacesRepoTest : KoinTest {
         val timestamp = Instant.ofEpochSecond(0L)
 
         coEvery { meteoApi.places() } returns emptyList()
-        every { placesDao.findAll(any()) } returns pagingSource
+        coEvery { placesDao.findByName(any()) } returns emptyList()
         every { repoPreferences.placesTimestamp } returns timestamp
 
-        val pager = runBlocking {
-            with(repo) {
-                findPlaces(
-                    "name",
-                    PagingConfig(
-                        pageSize = 2,
-                        prefetchDistance = 2,
-                        maxSize = 10,
-                        jumpThreshold = PagingSource.LoadResult.Page.COUNT_UNDEFINED
-                    )
-                )
-            }
-        }
-
         runBlocking {
-            pager.flow.take(1).toList()
+            repo.filterByName("name",)
         }
 
         coVerify { meteoApi.places() }
-        verify { placesDao.findAll("name%") }
+        coVerify { placesDao.findByName("name%") }
         coVerify { placesDao.setAll(any()) }
         verify { repoPreferences setProperty "placesTimestamp" value more(timestamp) }
     }
 
     @Test
     fun findPlacesLoadIfExpired() {
-        val timestamp = Instant.now().minusSeconds(RepoConfig.placesExpirySeconds).minusSeconds(2)
+        val timestamp = Instant.now().minusSeconds(RepoConfig.placesTimeout.seconds).minusSeconds(2)
 
         coEvery { meteoApi.places() } returns emptyList()
-        every { placesDao.findAll(any()) } returns pagingSource
+        coEvery { placesDao.findByName(any()) } returns emptyList()
         every { repoPreferences.placesTimestamp } returns timestamp
 
-        val pager = runBlocking {
-            with(repo) {
-                findPlaces(
-                    "name",
-                    PagingConfig(
-                        pageSize = 2,
-                        prefetchDistance = 2,
-                        maxSize = 10,
-                        jumpThreshold = PagingSource.LoadResult.Page.COUNT_UNDEFINED
-                    )
-                )
-            }
-        }
-
         runBlocking {
-            pager.flow.take(1).toList()
+            repo.filterByName("name",)
         }
 
         coVerify { meteoApi.places() }
-        verify { placesDao.findAll("name%") }
+        coVerify { placesDao.findByName("name%") }
         coVerify { placesDao.setAll(any()) }
         verify { repoPreferences setProperty "placesTimestamp" value more(timestamp) }
     }
 
     @Test
     fun findPlacesNoLoadIfLoaded() {
-        val timestamp = Instant.now().minusSeconds(RepoConfig.placesExpirySeconds).plusSeconds(2)
+        val timestamp = Instant.now().minusSeconds(RepoConfig.placesTimeout.seconds).plusSeconds(2)
 
         coEvery { meteoApi.places() } returns emptyList()
-        every { placesDao.findAll(any()) } returns pagingSource
+        coEvery { placesDao.findByName(any()) } returns emptyList()
         every { repoPreferences.placesTimestamp } returns timestamp
 
-        val pager = runBlocking {
-            with(repo) {
-                findPlaces(
-                    "name",
-                    PagingConfig(
-                        pageSize = 2,
-                        prefetchDistance = 2,
-                        maxSize = 10,
-                        jumpThreshold = PagingSource.LoadResult.Page.COUNT_UNDEFINED
-                    )
-                )
-            }
-        }
-
         runBlocking {
-            pager.flow.take(1).toList()
+            repo.filterByName("name",)
         }
 
         coVerify(exactly = 0) { meteoApi.places() }
-        verify { placesDao.findAll("name%") }
+        coVerify { placesDao.findByName("name%") }
         coVerify(exactly = 0) { placesDao.setAll(any()) }
         verify(exactly = 0) { repoPreferences setProperty "placesTimestamp" value more(timestamp) }
     }
@@ -177,49 +124,18 @@ class PlacesRepoTest : KoinTest {
             delay(1000 * 2L)
             emptyList()
         }
-        every { placesDao.findAll(any()) } returns pagingSource
+        coEvery { placesDao.findByName(any()) } returns emptyList()
         every { repoPreferences.placesTimestamp } returns timestamp
 
-        val pager1 = runBlocking {
-            with(repo) {
-                findPlaces(
-                    "name",
-                    PagingConfig(
-                        pageSize = 2,
-                        prefetchDistance = 2,
-                        maxSize = 10,
-                        jumpThreshold = PagingSource.LoadResult.Page.COUNT_UNDEFINED
-                    )
-                )
-            }
-        }
-
         runBlocking {
-            pager1.flow.take(1).toList()
-        }
+            val one = launch { repo.filterByName("name") }
+            val two = launch { repo.filterByName("eman") }
 
-        coVerify { meteoApi.places() }
-        verify { placesDao.findAll("name%") }
-
-        val pager2 = runBlocking {
-            with(repo) {
-                findPlaces(
-                    "eman",
-                    PagingConfig(
-                        pageSize = 2,
-                        prefetchDistance = 2,
-                        maxSize = 10,
-                        jumpThreshold = PagingSource.LoadResult.Page.COUNT_UNDEFINED
-                    )
-                )
-            }
-        }
-
-        runBlocking {
-            pager2.flow.take(1).toList()
+            joinAll(one, two)
         }
 
         coVerify(exactly = 1) { meteoApi.places() }
-        verify { placesDao.findAll("eman%") }
+        coVerify { placesDao.findByName("name%") }
+        coVerify { placesDao.findByName("eman%") }
     }
 }
