@@ -4,7 +4,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun UiTheme(
@@ -51,3 +54,11 @@ private val darkColors = Colors(
 
 val Colors.supplementary: Color
     get() = if (isLight) Color.LightGray else Color.LightGray
+
+@Immutable
+data class Paddings(
+    val screenPadding: Dp = 10.dp,
+    val itemPadding: Dp = 10.dp
+)
+
+val MaterialTheme.paddings get() = Paddings()
