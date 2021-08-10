@@ -8,7 +8,6 @@ import gj.meteoras.data.Place
 import gj.meteoras.repo.places.PlacesRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -39,7 +38,6 @@ class PlacesViewModel(
                 // https://medium.com/mobile-app-development-publication/kotlin-flow-buffer-is-like-a-fashion-adoption-31630a9cdb00
                 .collectLatest { name ->
                     work {
-                        delay(2000)
                         repo.filterByName(name).handle()
                     }
                 }
