@@ -13,7 +13,8 @@ class PlacesMapperTest {
             name = null,
             administrativeDivision = null,
             countryCode = null,
-            coordinates = null
+            coordinates = null,
+            country = null
         )
 
         val dao = net.toDao()
@@ -31,7 +32,8 @@ class PlacesMapperTest {
             coordinates = PlaceNet.Coordinates(
                 latitude = 12.34,
                 longitude = 56.78
-            )
+            ),
+            country = "Country"
         )
 
         val dao = net.toDao()
@@ -49,7 +51,27 @@ class PlacesMapperTest {
             coordinates = PlaceNet.Coordinates(
                 latitude = 12.34,
                 longitude = 56.78
-            )
+            ),
+            country = "Country"
+        )
+
+        val dao = net.toDao()
+
+        assertThat(dao).isNull()
+    }
+
+    @Test
+    fun toDaoNullIfNullCountryCode() {
+        val net = PlaceNet(
+            code = "code",
+            name = "name",
+            administrativeDivision = "division",
+            countryCode = null,
+            coordinates = PlaceNet.Coordinates(
+                latitude = 12.34,
+                longitude = 56.78
+            ),
+            country = "Country"
         )
 
         val dao = net.toDao()
@@ -63,16 +85,17 @@ class PlacesMapperTest {
             code = "code",
             name = "name",
             administrativeDivision = "division",
-            countryCode = null,
+            countryCode = "cc",
             coordinates = PlaceNet.Coordinates(
                 latitude = 12.34,
                 longitude = 56.78
-            )
+            ),
+            country = null
         )
 
         val dao = net.toDao()
 
-        assertThat(dao).isNull()
+        assertThat(dao).isNotNull
     }
 
     @Test
@@ -85,7 +108,8 @@ class PlacesMapperTest {
             coordinates = PlaceNet.Coordinates(
                 latitude = 12.34,
                 longitude = 56.78
-            )
+            ),
+            country = "Country"
         )
 
         val dao = net.toDao()
@@ -100,7 +124,8 @@ class PlacesMapperTest {
             name = "name",
             administrativeDivision = "division",
             countryCode = "cc",
-            coordinates = null
+            coordinates = null,
+            country = "Country"
         )
 
         val dao = net.toDao()
@@ -118,7 +143,8 @@ class PlacesMapperTest {
             coordinates = PlaceNet.Coordinates(
                 latitude = null,
                 longitude = 56.78
-            )
+            ),
+            country = "Country"
         )
 
         val dao = net.toDao()
@@ -136,7 +162,8 @@ class PlacesMapperTest {
             coordinates = PlaceNet.Coordinates(
                 latitude = 12.34,
                 longitude = null
-            )
+            ),
+            country = "Country"
         )
 
         val dao = net.toDao()
@@ -154,7 +181,8 @@ class PlacesMapperTest {
             coordinates = PlaceNet.Coordinates(
                 latitude = 12.34,
                 longitude = 56.78
-            )
+            ),
+            country = "Country"
         )
 
         val dao = net.toDao()
@@ -163,6 +191,7 @@ class PlacesMapperTest {
         assertThat(dao?.name).isEqualTo("name")
         assertThat(dao?.administrativeDivision).isEqualTo("division")
         assertThat(dao?.countryCode).isEqualTo("cc")
+        assertThat(dao?.country).isEqualTo("Country")
         assertThat(dao?.coordinates?.latitude).isEqualTo(12.34)
         assertThat(dao?.coordinates?.longitude).isEqualTo(56.78)
     }

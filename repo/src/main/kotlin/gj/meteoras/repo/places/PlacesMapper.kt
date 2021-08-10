@@ -22,6 +22,7 @@ fun PlaceNet.toDao() : Place? {
                 latitude = it.latitude ?: return null,
                 longitude = it.longitude ?: return null
             )
-        }
+        },
+        country = country
     )
 }

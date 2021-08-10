@@ -4,12 +4,21 @@ import gj.meteoras.db.dao.PlacesDao
 import gj.meteoras.net.api.MeteoApi
 import gj.meteoras.repo.RepoConfig
 import gj.meteoras.repo.RepoPreferences
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import kotlinx.coroutines.*
+import io.mockk.mockkObject
+import io.mockk.unmockkAll
+import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -63,79 +72,96 @@ class PlacesRepoTest : KoinTest {
     }
 
     @Test
-    fun findPlacesLoadIfNotLoaded() {
+    fun findPlaces() {
+        coEvery { placesDao.findByName(any()) } returns emptyList()
+
+        val result = runBlocking {
+            repo.filterByName("name",)
+        }
+
+        assertThat(result.isSuccess).isTrue
+        coVerify(exactly = 0) { meteoApi.places() }
+        coVerify { placesDao.findByName("name%") }
+    }
+
+    @Test
+    fun findPlacesError() {
+        coEvery { placesDao.findByName(any()) } throws RuntimeException()
+
+        val result = runBlocking {
+            repo.filterByName("name",)
+        }
+
+        assertThat(result.isFailure).isTrue
+    }
+
+    @Test
+    fun syncPlacesInitial() {
         val timestamp = Instant.ofEpochSecond(0L)
 
         coEvery { meteoApi.places() } returns emptyList()
-        coEvery { placesDao.findByName(any()) } returns emptyList()
         every { repoPreferences.placesTimestamp } returns timestamp
 
-        runBlocking {
-            repo.filterByName("name",)
+        val result = runBlocking {
+            repo.syncPlaces()
         }
 
+        assertThat(result.isSuccess).isTrue
+        assertThat(result.getOrNull()).isTrue
         coVerify { meteoApi.places() }
-        coVerify { placesDao.findByName("name%") }
         coVerify { placesDao.setAll(any()) }
         verify { repoPreferences setProperty "placesTimestamp" value more(timestamp) }
     }
 
     @Test
-    fun findPlacesLoadIfExpired() {
+    fun syncPlacesExpired() {
         val timestamp = Instant.now().minusSeconds(RepoConfig.placesTimeout.seconds).minusSeconds(2)
 
         coEvery { meteoApi.places() } returns emptyList()
-        coEvery { placesDao.findByName(any()) } returns emptyList()
         every { repoPreferences.placesTimestamp } returns timestamp
 
-        runBlocking {
-            repo.filterByName("name",)
+        val result = runBlocking {
+            repo.syncPlaces()
         }
 
+        assertThat(result.isSuccess).isTrue
+        assertThat(result.getOrNull()).isTrue
         coVerify { meteoApi.places() }
-        coVerify { placesDao.findByName("name%") }
         coVerify { placesDao.setAll(any()) }
         verify { repoPreferences setProperty "placesTimestamp" value more(timestamp) }
     }
 
     @Test
-    fun findPlacesNoLoadIfLoaded() {
+    fun syncPlacesValid() {
         val timestamp = Instant.now().minusSeconds(RepoConfig.placesTimeout.seconds).plusSeconds(2)
 
         coEvery { meteoApi.places() } returns emptyList()
-        coEvery { placesDao.findByName(any()) } returns emptyList()
         every { repoPreferences.placesTimestamp } returns timestamp
 
-        runBlocking {
-            repo.filterByName("name",)
+        val result = runBlocking {
+            repo.syncPlaces()
         }
 
+        assertThat(result.isSuccess).isTrue
+        assertThat(result.getOrNull()).isFalse
         coVerify(exactly = 0) { meteoApi.places() }
-        coVerify { placesDao.findByName("name%") }
         coVerify(exactly = 0) { placesDao.setAll(any()) }
         verify(exactly = 0) { repoPreferences setProperty "placesTimestamp" value more(timestamp) }
     }
 
     @Test
-    fun findPlacesNoLoadIfLoading() {
+    fun syncPlacesError() {
         val timestamp = Instant.ofEpochSecond(0L)
 
-        coEvery { meteoApi.places() } coAnswers {
-            delay(1000 * 2L)
-            emptyList()
-        }
+        coEvery { meteoApi.places() } throws RuntimeException()
         coEvery { placesDao.findByName(any()) } returns emptyList()
         every { repoPreferences.placesTimestamp } returns timestamp
 
-        runBlocking {
-            val one = launch { repo.filterByName("name") }
-            val two = launch { repo.filterByName("eman") }
-
-            joinAll(one, two)
+        val result = runBlocking {
+            repo.syncPlaces()
         }
 
+        assertThat(result.isFailure).isTrue
         coVerify(exactly = 1) { meteoApi.places() }
-        coVerify { placesDao.findByName("name%") }
-        coVerify { placesDao.findByName("eman%") }
     }
 }
