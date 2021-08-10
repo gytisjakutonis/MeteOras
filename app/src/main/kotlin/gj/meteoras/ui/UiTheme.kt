@@ -50,4 +50,4 @@ private val darkColors = Colors(
 )
 
 val Colors.supplementary: Color
-    get() = if (isLight) Color.LightGray else Color.DarkGray
+    get() = if (isLight) Color.LightGray else Color.LightGray

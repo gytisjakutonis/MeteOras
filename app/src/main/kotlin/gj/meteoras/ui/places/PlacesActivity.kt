@@ -10,7 +10,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import gj.meteoras.ui.UiTheme
 import gj.meteoras.ui.compose.TopNavigationBar
@@ -29,12 +28,11 @@ class PlacesActivity : ComponentActivity() {
 
             UiTheme {
                 val systemUiController = rememberSystemUiController()
-                val useDarkIcons = MaterialTheme.colors.isLight
+                val systemBarColor = MaterialTheme.colors.primaryVariant
 
                 SideEffect {
                     systemUiController.setSystemBarsColor(
-                        color = Color.Transparent,
-                        darkIcons = useDarkIcons
+                        color = systemBarColor,
                     )
                 }
 
