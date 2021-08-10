@@ -14,6 +14,7 @@ data class Place(
     val name : String,
     val administrativeDivision : String? = null,
     val countryCode : String,
+    val country: String? = null,
     @Embedded
     val coordinates : Coordinates? = null
 ) {
