@@ -5,13 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Surface
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import gj.meteoras.ui.UiTheme
+import gj.meteoras.ui.compose.TopNavigationBar
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @ExperimentalAnimationApi
@@ -26,21 +28,32 @@ class PlacesActivity : ComponentActivity() {
             val state = model.state.observeAsState()
 
             UiTheme {
-                ViewState(state = state.value)
+                val systemUiController = rememberSystemUiController()
+                val useDarkIcons = MaterialTheme.colors.isLight
+
+                SideEffect {
+                    systemUiController.setSystemBarsColor(
+                        color = Color.Transparent,
+                        darkIcons = useDarkIcons
+                    )
+                }
+
+                Scaffold(
+                    topBar = {
+                        TopNavigationBar("Find a Place")
+                    },
+                    content = {
+                        ViewState(state = state.value)
+                    }
+                )
             }
         }
     }
 
     @Composable
-    fun ViewState(state: PlacesViewState?) {
-        Surface(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth()
-        ) {
-            Column {
-                PlacesFilter(model::filter)
-            }
+    private fun ViewState(state: PlacesViewState?) {
+        Column {
+            PlacesFilter(model::filter)
         }
     }
 }
