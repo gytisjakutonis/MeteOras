@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -49,6 +48,7 @@ fun PlacesFilter(
                 shape = RoundedCornerShape(50),
                 color = MaterialTheme.colors.supplementary
             )
+            .padding(top = 5.dp, bottom = 5.dp)
     ) {
         Icon(
             Icons.Filled.Search,
@@ -57,10 +57,8 @@ fun PlacesFilter(
             modifier = Modifier.padding(start = 5.dp)
         )
 
-        Spacer(modifier = Modifier.size(5.dp))
-
         Box(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).padding(start = 5.dp, end = 5.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             AnimatedVisibility(visible = value.value.isEmpty(),) {
@@ -83,8 +81,6 @@ fun PlacesFilter(
                 modifier = Modifier.fillMaxWidth()
             )
         }
-
-        Spacer(modifier = Modifier.size(5.dp))
 
         AnimatedVisibility(
             visible = value.value.isNotEmpty(),
