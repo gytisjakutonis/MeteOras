@@ -3,6 +3,7 @@ package gj.meteoras.ui.places.compose
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import gj.meteoras.ext.compose.then
 import gj.meteoras.ui.places.PlacesViewAction
 
 @Composable
@@ -13,8 +14,11 @@ fun PlacesAction(
     when (action) {
         is PlacesViewAction.ShowMessage -> LaunchedEffect(action) {
             snackbarHostState.showSnackbar(
-                action.message,
-            )
+                message = action.message,
+                actionLabel = action.action,
+            ).then {
+                action.callback?.invoke()
+            }
         }
     }
 }

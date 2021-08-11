@@ -13,8 +13,7 @@ data class Forced<T>(val value: T, val forced: Boolean = false)
 
 typealias ForcedStateFlow<T> = MutableStateFlow<Forced<T>>
 
-@ExperimentalTime
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, ExperimentalTime::class)
 fun <T> ForcedStateFlow<T>.distinct(timeout: Duration): Flow<T> =
     debounce { item ->
         if (item.forced) Duration.ZERO else timeout

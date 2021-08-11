@@ -28,4 +28,7 @@ dependencies {
 
     // room
     implementation "androidx.room:room-ktx:$room_version"
+
+    // compose
+    implementation "androidx.compose.material:material:$compose_version"
 }
