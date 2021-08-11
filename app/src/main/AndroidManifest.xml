@@ -16,6 +16,11 @@
             android:authorities="${applicationId}.firebaseinitprovider"
             android:exported="false" />
 
+        <provider
+            android:name="gj.meteoras.Init"
+            android:authorities="${applicationId}.appinit"
+            android:exported="false" />
+
         <activity
             android:name=".ui.places.PlacesActivity"
             android:exported="true"

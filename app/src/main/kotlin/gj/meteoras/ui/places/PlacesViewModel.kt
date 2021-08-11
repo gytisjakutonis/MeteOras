@@ -41,12 +41,13 @@ class PlacesViewModel(
                     repo.filterByName(name)
                         .onSuccess { value ->
                             stateFlow.value.copy(places = value, filter = name).emit()
-                        }.onFailure {
+                        }.onFailure { error ->
+                            error.timber()
                             stateFlow.value.copy(filter = name).emit()
                         }
 
                     if (name == "aa") {
-                        PlacesViewAction.ShowMessage("Test").emit()
+                        PlacesViewAction.ShowMessage(message = "Test", action = "Dismiss").emit()
                     }
                 }
         }
@@ -63,6 +64,8 @@ class PlacesViewModel(
                     nameFilter.emit(Forced(value = stateFlow.value.filter, forced = true))
                 }
             }.onFailure { error ->
+                error.timber()
+
                 PlacesViewAction.ShowMessage(
                     message = error.translate(),
                     action = "Retry"
@@ -106,5 +109,5 @@ class PlacesViewModel(
         "Something wrong. Check network"
 }
 
-@ExperimentalTime
+@OptIn(ExperimentalTime::class)
 private val filterDelay = Duration.milliseconds(200L)

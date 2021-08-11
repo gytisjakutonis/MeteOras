@@ -31,7 +31,7 @@ class PlacesActivity : ComponentActivity() {
         setContent {
             val state = model.state.observeAsState()
             val scaffoldState = rememberScaffoldState()
-            val action = model.actions.collectAsState(null, Dispatchers.Default)
+            val action = model.action.collectAsState(null, Dispatchers.Default)
 
             UiTheme {
                 val systemUiController = rememberSystemUiController()
