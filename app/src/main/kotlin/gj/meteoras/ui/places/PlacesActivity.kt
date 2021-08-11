@@ -23,7 +23,9 @@ import gj.meteoras.ui.compose.TopNavigationBar
 import gj.meteoras.ui.paddings
 import gj.meteoras.ui.places.compose.PlacesList
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 @ExperimentalAnimationApi
 class PlacesActivity : ComponentActivity() {
 
@@ -76,7 +78,9 @@ class PlacesActivity : ComponentActivity() {
                     .fillMaxWidth()
                     .padding(top = MaterialTheme.paddings.screenPadding),
             ) {
-                PlacesList(state?.places ?: emptyList())
+                Fading(visible = state?.busy == false) {
+                    PlacesList(state?.places ?: emptyList())
+                }
 
                 Fading(visible = state?.busy == true) {
                     CircularProgressIndicator()

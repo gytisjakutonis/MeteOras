@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import gj.meteoras.repo.places.PlacesRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -56,7 +55,6 @@ class PlacesViewModel(
         viewModelScope.launch {
             Dispatchers.Default.invoke {
                 work {
-                    delay(5000)
                     repo.syncPlaces()
                 }
             }.onSuccess { result ->
