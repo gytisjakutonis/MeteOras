@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import gj.meteoras.ext.coroutines.Forced
 import gj.meteoras.ext.coroutines.ForcedStateFlow
 import gj.meteoras.ext.coroutines.distinct
+import gj.meteoras.ext.lang.timber
 import gj.meteoras.repo.places.PlacesRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
@@ -18,21 +19,26 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
-@ExperimentalTime
 class PlacesViewModel(
     private val repo: PlacesRepo
 ) : ViewModel() {
 
     private val nameFilter = ForcedStateFlow("")
     private val stateFlow = MutableStateFlow(PlacesViewState())
-    // flow backed livedata, so we can emit states from non-main thread
-    val state: LiveData<PlacesViewState> = stateFlow.asLiveData(Dispatchers.Default)
-    val actions = MutableSharedFlow<PlacesViewAction>(
+    private val actionFlow = MutableSharedFlow<PlacesViewAction>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
+    // flow backed livedata, so we can emit states from non-main thread
+    val state: LiveData<PlacesViewState> = stateFlow.asLiveData(Dispatchers.Default)
+    val action: LiveData<PlacesViewAction?> = actionFlow.asLiveData(Dispatchers.Default)
+
     init {
+        viewModelScope.launch {
+            PlacesViewAction.ShowMessage(message = "Init", action = "Dismiss").emit()
+        }
+
         viewModelScope.launch(Dispatchers.Default) {
             nameFilter
                 .distinct(filterDelay)
@@ -102,7 +108,7 @@ class PlacesViewModel(
     }
 
     private suspend fun PlacesViewAction.emit() {
-        actions.emit(this)
+        actionFlow.emit(this)
     }
 
     private fun Throwable.translate(): String =
