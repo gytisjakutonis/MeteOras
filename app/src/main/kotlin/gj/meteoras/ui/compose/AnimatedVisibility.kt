@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 
-@ExperimentalAnimationApi
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun BoxScope.AnimatedVisibility(
     enter: EnterTransition = fadeIn(),

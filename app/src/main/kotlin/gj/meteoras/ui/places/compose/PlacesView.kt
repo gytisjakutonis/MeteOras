@@ -1,6 +1,5 @@
 package gj.meteoras.ui.places.compose
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +13,6 @@ import gj.meteoras.ui.compose.AnimatedVisibility
 import gj.meteoras.ui.paddings
 import gj.meteoras.ui.places.PlacesViewState
 
-@ExperimentalAnimationApi
 @Composable
 fun PlacesView(
     state: PlacesViewState?,

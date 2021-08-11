@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import gj.meteoras.ui.compose.AnimatedVisibility
 import gj.meteoras.ui.supplementary
 
-@ExperimentalAnimationApi
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun PlacesFilter(
     onValueChange: (String) -> Unit

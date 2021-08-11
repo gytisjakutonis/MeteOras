@@ -1,5 +1,6 @@
 package gj.meteoras.ui.places.compose
 
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,6 +17,9 @@ fun PlacesAction(
             snackbarHostState.showSnackbar(
                 message = action.message,
                 actionLabel = action.action,
+                duration =
+                    if (action.action != null) SnackbarDuration.Indefinite
+                    else SnackbarDuration.Short
             ).then {
                 action.callback?.invoke()
             }

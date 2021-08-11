@@ -29,10 +29,6 @@ class PlacesViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.Default) {
-            PlacesViewAction.ShowMessage(message = "Init", action = "Dismiss").emit()
-        }
-
-        viewModelScope.launch(Dispatchers.Default) {
             nameFilter
                 .distinct(filterDelay)
                 // https://medium.com/mobile-app-development-publication/kotlin-flow-buffer-is-like-a-fashion-adoption-31630a9cdb00
@@ -44,10 +40,6 @@ class PlacesViewModel(
                             error.timber()
                             state.value.copy(filter = name).emit()
                         }
-
-                    if (name == "aa") {
-                        PlacesViewAction.ShowMessage(message = "Test", action = "Dismiss").emit()
-                    }
                 }
         }
     }
