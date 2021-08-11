@@ -10,7 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import gj.meteoras.ui.compose.Fading
+import gj.meteoras.ui.compose.AnimatedVisibility
 import gj.meteoras.ui.paddings
 import gj.meteoras.ui.places.PlacesViewState
 
@@ -31,11 +31,11 @@ fun PlacesView(
                 .fillMaxWidth()
                 .padding(top = MaterialTheme.paddings.screenPadding),
         ) {
-            Fading(visible = state?.busy == false) {
+            AnimatedVisibility(visible = state?.busy == false) {
                 PlacesList(state?.places ?: emptyList())
             }
 
-            Fading(visible = state?.busy == true) {
+            AnimatedVisibility(visible = state?.busy == true) {
                 CircularProgressIndicator()
             }
         }

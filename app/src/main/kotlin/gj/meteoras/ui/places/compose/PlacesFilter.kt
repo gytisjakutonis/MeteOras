@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import gj.meteoras.ui.compose.Fading
+import gj.meteoras.ui.compose.AnimatedVisibility
 import gj.meteoras.ui.supplementary
 
 @ExperimentalAnimationApi
@@ -63,7 +63,7 @@ fun PlacesFilter(
             modifier = Modifier.weight(1f),
             contentAlignment = Alignment.CenterStart
         ) {
-            Fading(visible = value.value.isEmpty(),) {
+            AnimatedVisibility(visible = value.value.isEmpty(),) {
                 Text(
                     text = "Type name here",
                     color = MaterialTheme.colors.supplementary,
