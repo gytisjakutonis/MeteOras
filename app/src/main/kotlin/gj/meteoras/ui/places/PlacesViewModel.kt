@@ -28,7 +28,7 @@ class PlacesViewModel(
     // flow backed livedata, so we can emit states from non-main thread
     val state: LiveData<PlacesViewState> = stateFlow.asLiveData(Dispatchers.Default)
     val actions = MutableSharedFlow<PlacesViewAction>(
-        replay = 0,
+        replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
@@ -38,11 +38,12 @@ class PlacesViewModel(
                 .distinct(filterDelay)
                 // https://medium.com/mobile-app-development-publication/kotlin-flow-buffer-is-like-a-fashion-adoption-31630a9cdb00
                 .collectLatest { name ->
-                    stateFlow.value.copy(filter = name).emit()
-
-                    repo.filterByName(name).onSuccess { value ->
-                        stateFlow.value.copy(places = value).emit()
-                    }
+                    repo.filterByName(name)
+                        .onSuccess { value ->
+                            stateFlow.value.copy(places = value, filter = name).emit()
+                        }.onFailure {
+                            stateFlow.value.copy(filter = name).emit()
+                        }
 
                     if (name == "aa") {
                         PlacesViewAction.ShowMessage("Test").emit()
