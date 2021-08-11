@@ -8,12 +8,13 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import gj.meteoras.ui.UiTheme
 import gj.meteoras.ui.compose.TopNavigationBar
 import gj.meteoras.ui.places.compose.PlacesAction
 import gj.meteoras.ui.places.compose.PlacesView
+import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.time.ExperimentalTime
 
@@ -27,8 +28,8 @@ class PlacesActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val state = model.state.observeAsState()
-            val action = model.action.observeAsState()
+            val state = model.state.collectAsState(null, Dispatchers.Default)
+            val action = model.action.collectAsState(null, Dispatchers.Default)
             val scaffoldState = rememberScaffoldState()
 
             UiTheme {

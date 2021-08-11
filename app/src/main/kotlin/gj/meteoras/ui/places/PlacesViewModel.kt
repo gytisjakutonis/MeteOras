@@ -1,8 +1,6 @@
 package gj.meteoras.ui.places
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import gj.meteoras.ext.coroutines.Forced
 import gj.meteoras.ext.coroutines.ForcedStateFlow
@@ -14,7 +12,6 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
@@ -24,18 +21,14 @@ class PlacesViewModel(
 ) : ViewModel() {
 
     private val nameFilter = ForcedStateFlow("")
-    private val stateFlow = MutableStateFlow(PlacesViewState())
-    private val actionFlow = MutableSharedFlow<PlacesViewAction>(
+    val state = MutableStateFlow(PlacesViewState())
+    val action = MutableSharedFlow<PlacesViewAction>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
-    // flow backed livedata, so we can emit states from non-main thread
-    val state: LiveData<PlacesViewState> = stateFlow.asLiveData(Dispatchers.Default)
-    val action: LiveData<PlacesViewAction?> = actionFlow.asLiveData(Dispatchers.Default)
-
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             PlacesViewAction.ShowMessage(message = "Init", action = "Dismiss").emit()
         }
 
@@ -46,10 +39,10 @@ class PlacesViewModel(
                 .collectLatest { name ->
                     repo.filterByName(name)
                         .onSuccess { value ->
-                            stateFlow.value.copy(places = value, filter = name).emit()
+                            state.value.copy(places = value, filter = name).emit()
                         }.onFailure { error ->
                             error.timber()
-                            stateFlow.value.copy(filter = name).emit()
+                            state.value.copy(filter = name).emit()
                         }
 
                     if (name == "aa") {
@@ -60,14 +53,12 @@ class PlacesViewModel(
     }
 
     fun resume() {
-        viewModelScope.launch {
-            Dispatchers.Default.invoke {
-                work {
-                    repo.syncPlaces()
-                }
+        viewModelScope.launch(Dispatchers.Default) {
+            work {
+                repo.syncPlaces()
             }.onSuccess { result ->
                 if (result) {
-                    nameFilter.emit(Forced(value = stateFlow.value.filter, forced = true))
+                    nameFilter.emit(Forced(value = state.value.filter, forced = true))
                 }
             }.onFailure { error ->
                 error.timber()
@@ -96,7 +87,7 @@ class PlacesViewModel(
     }
 
     private suspend fun busy(busy: Boolean = true) {
-        stateFlow.value.copy(busy = busy).emit()
+        state.value.copy(busy = busy).emit()
     }
 
     private suspend fun idle() {
@@ -104,11 +95,11 @@ class PlacesViewModel(
     }
 
     private suspend fun PlacesViewState.emit() {
-        stateFlow.emit(this)
+        state.emit(this)
     }
 
     private suspend fun PlacesViewAction.emit() {
-        actionFlow.emit(this)
+        action.emit(this)
     }
 
     private fun Throwable.translate(): String =
