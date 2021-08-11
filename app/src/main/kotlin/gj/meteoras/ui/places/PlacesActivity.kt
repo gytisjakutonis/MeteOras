@@ -4,24 +4,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import gj.meteoras.ui.UiTheme
-import gj.meteoras.ui.compose.Fading
 import gj.meteoras.ui.compose.TopNavigationBar
-import gj.meteoras.ui.paddings
-import gj.meteoras.ui.places.compose.PlacesList
+import gj.meteoras.ui.places.compose.PlacesAction
+import gj.meteoras.ui.places.compose.PlacesView
+import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.time.ExperimentalTime
 
@@ -36,6 +30,8 @@ class PlacesActivity : ComponentActivity() {
 
         setContent {
             val state = model.state.observeAsState()
+            val scaffoldState = rememberScaffoldState()
+            val action = model.actions.collectAsState(null, Dispatchers.Default)
 
             UiTheme {
                 val systemUiController = rememberSystemUiController()
@@ -48,13 +44,21 @@ class PlacesActivity : ComponentActivity() {
                 }
 
                 Scaffold(
+                    scaffoldState = scaffoldState,
                     topBar = {
                         TopNavigationBar("Find a Place")
-                    },
-                    content = {
-                        ViewState(state = state.value)
                     }
-                )
+                ) {
+                    PlacesView(
+                        state = state.value,
+                        onFilter = model::filter
+                    )
+
+                    PlacesAction(
+                        action = action.value,
+                        snackbarHostState = scaffoldState.snackbarHostState
+                    )
+                }
             }
         }
     }
@@ -63,29 +67,5 @@ class PlacesActivity : ComponentActivity() {
         super.onResume()
 
         model.resume()
-    }
-
-    @Composable
-    private fun ViewState(state: PlacesViewState?) {
-        Column(
-            modifier = Modifier.padding(MaterialTheme.paddings.screenPadding)
-        ) {
-            PlacesFilter(model::filter)
-
-            Box(
-                contentAlignment = Alignment.TopCenter,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = MaterialTheme.paddings.screenPadding),
-            ) {
-                Fading(visible = state?.busy == false) {
-                    PlacesList(state?.places ?: emptyList())
-                }
-
-                Fading(visible = state?.busy == true) {
-                    CircularProgressIndicator()
-                }
-            }
-        }
     }
 }

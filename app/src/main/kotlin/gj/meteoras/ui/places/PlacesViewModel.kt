@@ -4,14 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import gj.meteoras.ext.coroutines.Forced
+import gj.meteoras.ext.coroutines.ForcedStateFlow
+import gj.meteoras.ext.coroutines.distinct
 import gj.meteoras.repo.places.PlacesRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
@@ -22,30 +23,29 @@ class PlacesViewModel(
     private val repo: PlacesRepo
 ) : ViewModel() {
 
-    private val nameFilter = MutableStateFlow(Name(""))
+    private val nameFilter = ForcedStateFlow("")
     private val stateFlow = MutableStateFlow(PlacesViewState())
     // flow backed livedata, so we can emit states from non-main thread
     val state: LiveData<PlacesViewState> = stateFlow.asLiveData(Dispatchers.Default)
     val actions = MutableSharedFlow<PlacesViewAction>(
-        replay = 1,
+        replay = 0,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
     init {
         viewModelScope.launch(Dispatchers.Default) {
             nameFilter
-                .debounce { name ->
-                    if (name.forced) Duration.ZERO else filterDelay
-                }
-                .distinctUntilChanged { old, new ->
-                    if (new.forced) false else old == new
-                }
+                .distinct(filterDelay)
                 // https://medium.com/mobile-app-development-publication/kotlin-flow-buffer-is-like-a-fashion-adoption-31630a9cdb00
                 .collectLatest { name ->
-                    stateFlow.value.copy(filter = name.value).emit()
+                    stateFlow.value.copy(filter = name).emit()
 
-                    repo.filterByName(name.value).onSuccess { value ->
+                    repo.filterByName(name).onSuccess { value ->
                         stateFlow.value.copy(places = value).emit()
+                    }
+
+                    if (name == "aa") {
+                        PlacesViewAction.ShowMessage("Test").emit()
                     }
                 }
         }
@@ -59,7 +59,7 @@ class PlacesViewModel(
                 }
             }.onSuccess { result ->
                 if (result) {
-                    nameFilter.emit(Name(value = stateFlow.value.filter, forced = true))
+                    nameFilter.emit(Forced(value = stateFlow.value.filter, forced = true))
                 }
             }.onFailure { error ->
                 PlacesViewAction.ShowMessage(
@@ -74,7 +74,7 @@ class PlacesViewModel(
 
     fun filter(name: String) {
         viewModelScope.launch(Dispatchers.Default) {
-            nameFilter.emit(Name(value = name))
+            nameFilter.emit(Forced(value = name))
         }
     }
 
@@ -107,5 +107,3 @@ class PlacesViewModel(
 
 @ExperimentalTime
 private val filterDelay = Duration.milliseconds(200L)
-
-private data class Name(val value: String, val forced: Boolean = false)

@@ -1,10 +1,14 @@
 package gj.meteoras.ui.places
 
-sealed class PlacesViewAction {
+import java.time.Instant
+
+sealed class PlacesViewAction(
+    val timestamp: Instant = Instant.now()
+) {
 
     data class ShowMessage(
         val message: String,
-        val action: String,
-        val callback: () -> Unit = { }
+        val action: String? = null,
+        val callback: (() -> Unit)? = null
     ) : PlacesViewAction()
 }

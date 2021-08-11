@@ -1,4 +1,4 @@
-package gj.meteoras.ui.places
+package gj.meteoras.ui.places.compose
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -80,6 +80,7 @@ fun PlacesFilter(
                 singleLine = true,
                 textStyle = TextStyle(color = MaterialTheme.colors.onSurface),
                 cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
+                modifier = Modifier.fillMaxWidth()
             )
         }
 
