@@ -12,7 +12,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import gj.meteoras.ui.compose.TopNavigationBar
+import gj.meteoras.ext.lang.otherwise
+import gj.meteoras.ui.compose.TopBar
 import gj.meteoras.ui.places.PlacesViewModel
 import gj.meteoras.ui.places.compose.PlaceView
 import gj.meteoras.ui.places.compose.PlacesView
@@ -38,33 +39,40 @@ class MainActivity : ComponentActivity() {
                 val systemBarColor = MaterialTheme.colors.primaryVariant
 
                 SideEffect {
-                    systemUiController.setSystemBarsColor(
-                        color = systemBarColor,
-                    )
+                    systemUiController.setSystemBarsColor(color = systemBarColor,)
                 }
+
+                //val navBackStackEntry = navController.currentBackStackEntryAsState()
 
                 Scaffold(
                     scaffoldState = scaffoldState,
                     topBar = {
-                        TopNavigationBar("Find a Place")
+                        TopBar(
+                            title = "Find a Place",
+                            onBack = {
+                                navController.navigateUp().otherwise {
+                                    onBackPressed()
+                                }
+                            }
+                        )
                     }
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = "places"
+                        startDestination = Destination.Places.route
                     ) {
-                        composable("places") {
+                        composable(Destination.Places.route) {
                             PlacesView(
                                 model = model,
                                 scaffoldState = scaffoldState,
-                                navController = navController
+                                navController = navController,
                             )
                         }
 
-                        composable("place") {
+                        composable(Destination.Place.route) {
                             PlaceView(
                                 scaffoldState = scaffoldState,
-                                navController = navController
+                                navController = navController,
                             )
                         }
                     }
@@ -72,4 +80,9 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+enum class Destination(val route: String) {
+    Places("places"),
+    Place("place")
 }

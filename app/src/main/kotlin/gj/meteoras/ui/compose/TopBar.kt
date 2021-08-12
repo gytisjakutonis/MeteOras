@@ -1,6 +1,5 @@
 package gj.meteoras.ui.compose
 
-import androidx.activity.ComponentActivity
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -10,20 +9,23 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 
 @Composable
-fun ComponentActivity.TopNavigationBar(
-    title: String
+fun TopBar(
+    title: String,
+    onBack: () -> Unit
 ) = TopAppBar(
     title = {
         Text(text = title)
     },
     navigationIcon = {
         IconButton(
-            onClick = this::onBackPressed
+            onClick = {
+                onBack()
+            }
         ) {
             Icon(
-                Icons.Filled.ArrowBack,
+                imageVector = Icons.Filled.ArrowBack,
                 contentDescription = null
             )
         }
-    }
+    },
 )

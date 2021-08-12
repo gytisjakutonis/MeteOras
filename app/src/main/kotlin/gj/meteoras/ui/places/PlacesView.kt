@@ -27,7 +27,7 @@ import kotlin.time.ExperimentalTime
 fun PlacesView(
     model: PlacesViewModel,
     scaffoldState: ScaffoldState,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     val state = model.state.collectAsState(null, Dispatchers.Default)
     val action = model.action.collectAsAction(null)
