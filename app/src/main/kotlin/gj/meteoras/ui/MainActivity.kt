@@ -8,9 +8,13 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.SideEffect
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import gj.meteoras.ui.compose.TopNavigationBar
 import gj.meteoras.ui.places.PlacesViewModel
+import gj.meteoras.ui.places.compose.PlaceView
 import gj.meteoras.ui.places.compose.PlacesView
 import gj.meteoras.ui.theme.Theme
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -27,6 +31,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val scaffoldState = rememberScaffoldState()
+            val navController = rememberNavController()
 
             Theme {
                 val systemUiController = rememberSystemUiController()
@@ -44,18 +49,27 @@ class MainActivity : ComponentActivity() {
                         TopNavigationBar("Find a Place")
                     }
                 ) {
-                    PlacesView(
-                        model = model,
-                        scaffoldState.snackbarHostState
-                    )
+                    NavHost(
+                        navController = navController,
+                        startDestination = "places"
+                    ) {
+                        composable("places") {
+                            PlacesView(
+                                model = model,
+                                scaffoldState = scaffoldState,
+                                navController = navController
+                            )
+                        }
+
+                        composable("place") {
+                            PlaceView(
+                                scaffoldState = scaffoldState,
+                                navController = navController
+                            )
+                        }
+                    }
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        model.resume()
     }
 }

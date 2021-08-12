@@ -1,27 +1,30 @@
 package gj.meteoras.ui.places.compose
 
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import gj.meteoras.ext.compose.then
+import androidx.navigation.NavHostController
+import gj.meteoras.ext.compose.showSnackbar
 import gj.meteoras.ui.places.PlacesViewAction
 
 @Composable
 fun PlacesAction(
     action: PlacesViewAction?,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    navController: NavHostController
 ) {
     when (action) {
         is PlacesViewAction.ShowMessage -> LaunchedEffect(action) {
             snackbarHostState.showSnackbar(
                 message = action.message,
-                actionLabel = action.action,
-                duration =
-                    if (action.action != null) SnackbarDuration.Indefinite
-                    else SnackbarDuration.Short
-            ).then {
-                action.callback?.invoke()
+                action = action.action,
+                callback = action.callback
+            )
+        }
+
+        is PlacesViewAction.OpenPlace -> LaunchedEffect(action) {
+            navController.navigate("place") {
+                popUpTo("places") { inclusive = true }
             }
         }
     }

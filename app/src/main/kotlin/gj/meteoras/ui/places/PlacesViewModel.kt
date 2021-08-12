@@ -2,6 +2,7 @@ package gj.meteoras.ui.places
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import gj.meteoras.data.Place
 import gj.meteoras.ext.lang.timber
 import gj.meteoras.repo.places.PlacesRepo
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +56,12 @@ class PlacesViewModel(
     fun filter(name: String) {
         viewModelScope.launch(Dispatchers.Default) {
             nameFilter.emit(name)
+        }
+    }
+
+    fun use(place: Place) {
+        viewModelScope.launch(Dispatchers.Default) {
+            PlacesViewAction.OpenPlace(place = place).emit()
         }
     }
 

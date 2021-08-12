@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import gj.meteoras.ext.compose.AnimatedVisibility
 import gj.meteoras.ext.compose.collectAsAction
 import gj.meteoras.ui.places.PlacesViewModel
@@ -24,7 +26,8 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun PlacesView(
     model: PlacesViewModel,
-    snackbarHostState: SnackbarHostState,
+    scaffoldState: ScaffoldState,
+    navController: NavHostController
 ) {
     val state = model.state.collectAsState(null, Dispatchers.Default)
     val action = model.action.collectAsAction(null)
@@ -44,7 +47,10 @@ fun PlacesView(
                 .padding(top = MaterialTheme.paddings.screenPadding),
         ) {
             AnimatedVisibility(visible = state.value?.busy == false) {
-                PlacesList(state.value?.places ?: emptyList())
+                PlacesList(
+                    items = state.value?.places ?: emptyList(),
+                    onClick = model::use
+                )
             }
 
             AnimatedVisibility(visible = state.value?.busy == true) {
@@ -55,6 +61,11 @@ fun PlacesView(
 
     PlacesAction(
         action = action.value,
-        snackbarHostState = snackbarHostState
+        snackbarHostState = scaffoldState.snackbarHostState,
+        navController = navController
     )
+
+    LaunchedEffect(true) {
+        model.resume()
+    }
 }
