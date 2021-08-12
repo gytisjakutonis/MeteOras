@@ -40,21 +40,7 @@ class MainActivity : ComponentActivity() {
                     systemUiController.setSystemBarsColor(color = systemBarColor,)
                 }
 
-                //val navBackStackEntry = navController.currentBackStackEntryAsState()
-
-                Scaffold(
-                    scaffoldState = scaffoldState,
-                    /*topBar = {
-                        TopBar(
-                            title = "Find a Place",
-                            onBack = {
-                                navController.navigateUp().otherwise {
-                                    onBackPressed()
-                                }
-                            }
-                        )
-                    }*/
-                ) {
+                Scaffold(scaffoldState = scaffoldState,) {
                     NavHost(
                         navController = navController,
                         startDestination = Destination.Places.route
