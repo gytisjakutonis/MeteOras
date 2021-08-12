@@ -9,10 +9,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -29,13 +26,8 @@ class PlacesViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.Default) {
-            nameFilter
-                .debounce(filterDelay)
-                .distinctUntilChanged()
-                // https://medium.com/mobile-app-development-publication/kotlin-flow-buffer-is-like-a-fashion-adoption-31630a9cdb00
-                .collectLatest { name ->
-                    filterByName(name)
-                }
+            // https://medium.com/mobile-app-development-publication/kotlin-flow-buffer-is-like-a-fashion-adoption-31630a9cdb00
+            nameFilter.collectLatest { filterByName(it) }
         }
     }
 
@@ -102,6 +94,3 @@ class PlacesViewModel(
     private fun Throwable.translate(): String =
         "Something wrong. Check network"
 }
-
-@ExperimentalTime
-private val filterDelay = Duration.milliseconds(200L)

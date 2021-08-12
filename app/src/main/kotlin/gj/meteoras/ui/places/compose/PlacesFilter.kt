@@ -42,9 +42,10 @@ import kotlin.time.ExperimentalTime
 @ExperimentalAnimationApi
 @Composable
 fun PlacesFilter(
+    value: String,
     onValueChange: (String) -> Unit
 ) {
-    val value = rememberSaveable { mutableStateOf("") }
+    val state = rememberSaveable { mutableStateOf(value) }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -69,7 +70,7 @@ fun PlacesFilter(
             modifier = Modifier.weight(1f).padding(start = 5.dp, end = 5.dp),
             contentAlignment = Alignment.CenterStart
         ) {
-            AnimatedVisibility(visible = value.value.isEmpty(),) {
+            AnimatedVisibility(visible = state.value.isEmpty(),) {
                 Text(
                     text = "Type name here",
                     color = MaterialTheme.colors.supplementary,
@@ -77,8 +78,8 @@ fun PlacesFilter(
             }
 
             BasicTextField(
-                value = value.value,
-                onValueChange = { value.value = it },
+                value = state.value,
+                onValueChange = { state.value = it },
                 maxLines = 1,
                 singleLine = true,
                 textStyle = TextStyle(color = MaterialTheme.colors.onSurface),
@@ -87,7 +88,7 @@ fun PlacesFilter(
             )
 
             LaunchedEffect(value) {
-                snapshotFlow { value.value }
+                snapshotFlow { state.value }
                     .debounce(inputDelay)
                     .distinctUntilChanged()
                     .collect { onValueChange(it) }
@@ -95,19 +96,16 @@ fun PlacesFilter(
         }
 
         AnimatedVisibility(
-            visible = value.value.isNotEmpty(),
+            visible = state.value.isNotEmpty(),
             enter = fadeIn(),
             exit = fadeOut()
         ) {
             IconButton(
-                enabled = value.value.isNotEmpty(),
+                enabled = state.value.isNotEmpty(),
                 modifier = Modifier
                     .padding(end = 5.dp)
                     .then(Modifier.size(24.dp)),
-                onClick = {
-                    value.value = ""
-                    onValueChange("")
-                }
+                onClick = { state.value = "" }
             ) {
                 Icon(
                     Icons.Filled.Clear,

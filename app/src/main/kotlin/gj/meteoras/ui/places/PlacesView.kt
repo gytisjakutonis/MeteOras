@@ -32,7 +32,10 @@ fun PlacesView(
     Column(
         modifier = Modifier.padding(MaterialTheme.paddings.screenPadding)
     ) {
-        PlacesFilter(model::filter)
+        PlacesFilter(
+            value = state.value?.filter ?: "",
+            onValueChange = model::filter
+        )
 
         Box(
             contentAlignment = Alignment.TopCenter,
