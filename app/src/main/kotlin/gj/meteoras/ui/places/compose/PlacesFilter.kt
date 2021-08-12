@@ -28,8 +28,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import gj.meteoras.R
 import gj.meteoras.ext.compose.AnimatedVisibility
 import gj.meteoras.ui.theme.supplementary
 import kotlinx.coroutines.flow.collect
@@ -72,7 +73,7 @@ fun PlacesFilter(
         ) {
             AnimatedVisibility(visible = state.value.isEmpty(),) {
                 Text(
-                    text = "Type name here",
+                    text = stringResource(R.string.places_filter_hint),
                     color = MaterialTheme.colors.supplementary,
                 )
             }
@@ -82,7 +83,9 @@ fun PlacesFilter(
                 onValueChange = { state.value = it },
                 maxLines = 1,
                 singleLine = true,
-                textStyle = TextStyle(color = MaterialTheme.colors.onSurface),
+                textStyle = MaterialTheme.typography.body1.copy(
+                    color = MaterialTheme.colors.onSurface,
+                ),
                 cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
                 modifier = Modifier.fillMaxWidth()
             )

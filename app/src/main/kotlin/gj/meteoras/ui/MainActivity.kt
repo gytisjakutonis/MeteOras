@@ -12,8 +12,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import gj.meteoras.ext.lang.otherwise
-import gj.meteoras.ui.compose.TopBar
 import gj.meteoras.ui.places.PlacesViewModel
 import gj.meteoras.ui.places.compose.PlaceView
 import gj.meteoras.ui.places.compose.PlacesView
@@ -46,7 +44,7 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(
                     scaffoldState = scaffoldState,
-                    topBar = {
+                    /*topBar = {
                         TopBar(
                             title = "Find a Place",
                             onBack = {
@@ -55,7 +53,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         )
-                    }
+                    }*/
                 ) {
                     NavHost(
                         navController = navController,
