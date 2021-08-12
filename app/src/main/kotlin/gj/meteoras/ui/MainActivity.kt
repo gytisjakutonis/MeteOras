@@ -1,23 +1,24 @@
-package gj.meteoras.ui.places
+package gj.meteoras.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import gj.meteoras.ext.compose.collectAsAction
-import gj.meteoras.ui.UiTheme
 import gj.meteoras.ui.compose.TopNavigationBar
-import gj.meteoras.ui.places.compose.PlacesAction
+import gj.meteoras.ui.places.PlacesViewModel
 import gj.meteoras.ui.places.compose.PlacesView
-import kotlinx.coroutines.Dispatchers
+import gj.meteoras.ui.theme.Theme
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.time.ExperimentalTime
 
-class PlacesActivity : ComponentActivity() {
+@ExperimentalTime
+@ExperimentalAnimationApi
+class MainActivity : ComponentActivity() {
 
     val model: PlacesViewModel by viewModel()
 
@@ -25,11 +26,9 @@ class PlacesActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val state = model.state.collectAsState(null, Dispatchers.Default)
-            val action = model.action.collectAsAction(null)
             val scaffoldState = rememberScaffoldState()
 
-            UiTheme {
+            Theme {
                 val systemUiController = rememberSystemUiController()
                 val systemBarColor = MaterialTheme.colors.primaryVariant
 
@@ -46,13 +45,8 @@ class PlacesActivity : ComponentActivity() {
                     }
                 ) {
                     PlacesView(
-                        state = state.value,
-                        onFilter = model::filter
-                    )
-
-                    PlacesAction(
-                        action = action.value,
-                        snackbarHostState = scaffoldState.snackbarHostState
+                        model = model,
+                        scaffoldState.snackbarHostState
                     )
                 }
             }

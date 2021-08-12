@@ -21,17 +21,25 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import gj.meteoras.ui.compose.AnimatedVisibility
-import gj.meteoras.ui.supplementary
+import gj.meteoras.ext.compose.AnimatedVisibility
+import gj.meteoras.ui.theme.supplementary
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalAnimationApi::class)
+@ExperimentalTime
+@ExperimentalAnimationApi
 @Composable
 fun PlacesFilter(
     onValueChange: (String) -> Unit
@@ -70,16 +78,20 @@ fun PlacesFilter(
 
             BasicTextField(
                 value = value.value,
-                onValueChange = {
-                    value.value = it
-                    onValueChange(it)
-                },
+                onValueChange = { value.value = it },
                 maxLines = 1,
                 singleLine = true,
                 textStyle = TextStyle(color = MaterialTheme.colors.onSurface),
                 cursorBrush = SolidColor(MaterialTheme.colors.onSurface),
                 modifier = Modifier.fillMaxWidth()
             )
+
+            LaunchedEffect(value) {
+                snapshotFlow { value.value }
+                    .debounce(inputDelay)
+                    .distinctUntilChanged()
+                    .collect { onValueChange(it) }
+            }
         }
 
         AnimatedVisibility(
@@ -106,3 +118,6 @@ fun PlacesFilter(
         }
     }
 }
+
+@ExperimentalTime
+private val inputDelay = Duration.milliseconds(200L)

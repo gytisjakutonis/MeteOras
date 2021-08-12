@@ -11,9 +11,11 @@ import gj.meteoras.ui.uiModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import java.util.*
+import kotlin.time.ExperimentalTime
 
 class App : Application() {
 
+    @ExperimentalTime
     override fun onCreate() {
         super.onCreate()
 

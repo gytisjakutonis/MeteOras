@@ -15,6 +15,7 @@ import java.util.concurrent.TimeoutException
 import kotlin.time.ExperimentalTime
 import kotlin.time.toKotlinDuration
 
+@ExperimentalTime
 class PlacesRepo(
     private val preferences: RepoPreferences,
     private val dao: PlacesDao,
@@ -39,7 +40,6 @@ class PlacesRepo(
         return duration > RepoConfig.placesTimeout
     }
 
-    @OptIn(ExperimentalTime::class)
     private suspend fun loadPlaces() {
         // workaround for TimeoutCancellationException not being propagated to outer scope
         val placesNet = withTimeoutOrNull(RepoConfig.apiTimeout.toKotlinDuration()) {

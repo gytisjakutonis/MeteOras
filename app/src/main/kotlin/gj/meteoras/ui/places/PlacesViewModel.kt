@@ -2,9 +2,6 @@ package gj.meteoras.ui.places
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import gj.meteoras.ext.coroutines.Forced
-import gj.meteoras.ext.coroutines.ForcedStateFlow
-import gj.meteoras.ext.coroutines.distinct
 import gj.meteoras.ext.lang.timber
 import gj.meteoras.repo.places.PlacesRepo
 import kotlinx.coroutines.Dispatchers
@@ -12,15 +9,18 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class PlacesViewModel(
     private val repo: PlacesRepo
 ) : ViewModel() {
 
-    private val nameFilter = ForcedStateFlow("")
+    private val nameFilter = MutableStateFlow("")
     val state = MutableStateFlow(PlacesViewState())
     val action = MutableSharedFlow<PlacesViewAction>(
         replay = 1,
@@ -30,16 +30,11 @@ class PlacesViewModel(
     init {
         viewModelScope.launch(Dispatchers.Default) {
             nameFilter
-                .distinct(filterDelay)
+                .debounce(filterDelay)
+                .distinctUntilChanged()
                 // https://medium.com/mobile-app-development-publication/kotlin-flow-buffer-is-like-a-fashion-adoption-31630a9cdb00
                 .collectLatest { name ->
-                    repo.filterByName(name)
-                        .onSuccess { value ->
-                            state.value.copy(places = value, filter = name).emit()
-                        }.onFailure { error ->
-                            error.timber()
-                            state.value.copy(filter = name).emit()
-                        }
+                    filterByName(name)
                 }
         }
     }
@@ -50,7 +45,7 @@ class PlacesViewModel(
                 repo.syncPlaces()
             }.onSuccess { result ->
                 if (result) {
-                    nameFilter.emit(Forced(value = state.value.filter, forced = true))
+                    filterByName(state.value.filter)
                 }
             }.onFailure { error ->
                 error.timber()
@@ -67,7 +62,7 @@ class PlacesViewModel(
 
     fun filter(name: String) {
         viewModelScope.launch(Dispatchers.Default) {
-            nameFilter.emit(Forced(value = name))
+            nameFilter.emit(name)
         }
     }
 
@@ -76,6 +71,16 @@ class PlacesViewModel(
         block()
     } finally {
         idle()
+    }
+
+    private suspend fun filterByName(name: String) {
+        repo.filterByName(name)
+            .onSuccess { value ->
+                state.value.copy(places = value, filter = name).emit()
+            }.onFailure { error ->
+                error.timber()
+                state.value.copy(filter = name).emit()
+            }
     }
 
     private suspend fun busy(busy: Boolean = true) {
@@ -98,5 +103,5 @@ class PlacesViewModel(
         "Something wrong. Check network"
 }
 
-@OptIn(ExperimentalTime::class)
+@ExperimentalTime
 private val filterDelay = Duration.milliseconds(200L)

@@ -90,7 +90,7 @@ dependencies {
     implementation "androidx.compose.runtime:runtime:$compose_version"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.16.1'
-//    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$compose_version"
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07'
 //    implementation "androidx.compose.animation:animation:$compose_version"
 
     // room

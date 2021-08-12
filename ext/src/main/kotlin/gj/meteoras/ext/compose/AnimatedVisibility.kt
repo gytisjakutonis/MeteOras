@@ -1,4 +1,4 @@
-package gj.meteoras.ui.compose
+package gj.meteoras.ext.compose
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 
-@OptIn(ExperimentalAnimationApi::class)
+@ExperimentalAnimationApi
 @Composable
 fun BoxScope.AnimatedVisibility(
     enter: EnterTransition = fadeIn(),

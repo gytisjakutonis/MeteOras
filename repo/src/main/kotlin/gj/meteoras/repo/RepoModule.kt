@@ -4,7 +4,9 @@ import android.content.Context
 import gj.meteoras.repo.places.PlacesRepo
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 val repoModule = module {
 
     single {

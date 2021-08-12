@@ -6,8 +6,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import gj.meteoras.ui.paddings
-import gj.meteoras.ui.supplementary
+import gj.meteoras.ui.theme.paddings
+import gj.meteoras.ui.theme.supplementary
 
 @Composable
 fun ItemDivider() = Divider(

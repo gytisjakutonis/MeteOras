@@ -1,26 +1,9 @@
-package gj.meteoras.ui
+package gj.meteoras.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
-import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
-@Composable
-fun UiTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit,
-) {
-    MaterialTheme(
-        colors = if (darkTheme) darkColors else lightColors,
-        content = content,
-    )
-}
-
-private val lightColors = Colors(
+internal val lightColors = Colors(
     primary = Color(0xFF1b5e20),
     primaryVariant = Color(0xFF003300),
     secondary = Color(0xFF1565c0),
@@ -36,7 +19,7 @@ private val lightColors = Colors(
     true
 )
 
-private val darkColors = Colors(
+internal val darkColors = Colors(
     primary = Color(0xFF66bb6a),
     primaryVariant = Color(0xFF003300),
     secondary = Color(0xFF2196f3),
@@ -54,11 +37,3 @@ private val darkColors = Colors(
 
 val Colors.supplementary: Color
     get() = if (isLight) Color.LightGray else Color.LightGray
-
-@Immutable
-data class Paddings(
-    val screenPadding: Dp = 10.dp,
-    val itemPadding: Dp = 10.dp
-)
-
-val MaterialTheme.paddings get() = Paddings()
