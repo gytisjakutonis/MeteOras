@@ -15,11 +15,6 @@ android {
         compose = true
     }
 
-    buildFeatures {
-        dataBinding true
-        viewBinding true
-    }
-
     composeOptions {
         kotlinCompilerExtensionVersion '1.0.1'
         kotlinCompilerVersion '1.5.21'

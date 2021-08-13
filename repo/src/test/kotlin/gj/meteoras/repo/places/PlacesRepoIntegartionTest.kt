@@ -7,6 +7,8 @@ import gj.meteoras.db.Database
 import gj.meteoras.net.apiModule
 import gj.meteoras.repo.RepoConfig
 import gj.meteoras.repo.RepoPreferences
+import gj.meteoras.test.TimberRule
+import gj.meteoras.test.trustSsl
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -24,8 +26,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
 import org.junit.runner.RunWith
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -34,14 +34,8 @@ import org.koin.test.KoinTestRule
 import org.koin.test.inject
 import org.robolectric.annotation.Config
 import timber.log.Timber
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
 import java.time.Duration
 import java.time.Instant
-import javax.net.ssl.HostnameVerifier
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSession
-import javax.net.ssl.X509TrustManager
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -75,7 +69,7 @@ class PlacesRepoIntegartionTest : KoinTest {
                         .connectTimeout(Duration.ofSeconds(5L))
                         .readTimeout(Duration.ofSeconds(5L))
                         .writeTimeout(Duration.ofSeconds(5L))
-                        .trustSSL()
+                        .trustSsl()
                         .build()
                 }
             },
@@ -135,38 +129,3 @@ class PlacesRepoIntegartionTest : KoinTest {
     }
 }
 
-private fun OkHttpClient.Builder.trustSSL(): OkHttpClient.Builder {
-
-    val trustMan = object : X509TrustManager {
-        override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
-        override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
-        override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
-    }
-
-    val sslContext = SSLContext.getInstance("SSL")
-    sslContext.init(null, arrayOf(trustMan), SecureRandom())
-
-    return sslSocketFactory(sslContext.socketFactory, trustMan)
-        .hostnameVerifier(object : HostnameVerifier {
-            override fun verify(hostname: String?, session: SSLSession?): Boolean = true
-        })
-}
-
-class TimberRule : TestWatcher() {
-
-    private val printlnTree = object : Timber.DebugTree() {
-        override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-            println("$tag: $message")
-        }
-    }
-
-    override fun starting(description: Description?) {
-        super.starting(description)
-        Timber.plant(printlnTree)
-    }
-
-    override fun finished(description: Description?) {
-        super.finished(description)
-        Timber.uproot(printlnTree)
-    }
-}

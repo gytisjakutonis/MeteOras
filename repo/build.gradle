@@ -23,7 +23,7 @@ dependencies {
     implementation project(path: ':net')
     implementation project(path: ':db')
 
-    // room
+    // test
+    testImplementation project(path: ':test')
     testImplementation "androidx.room:room-runtime:$room_version"
-    //testImplementation "androidx.room:room-ktx:$room_version"
 }
