@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">MeteOras</string>
 
+    <string name="error_network">Something wrong. Check network</string>
+
     <string name="places_filter_hint">Pick a place</string>
+    <string name="places_retry_action">Retry</string>
 </resources>

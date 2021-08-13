@@ -5,6 +5,7 @@ import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
+import timber.log.Timber
 import java.io.File
 
 val netModule = module {
@@ -20,6 +21,13 @@ val netModule = module {
                 addNetworkInterceptor(
                     HttpLoggingInterceptor().apply {
                         level = HttpLoggingInterceptor.Level.BODY
+                    }
+                )
+                addNetworkInterceptor(
+                    HttpLoggingInterceptor(
+                        logger = { Timber.d(it) }
+                    ).apply {
+                        level = HttpLoggingInterceptor.Level.BASIC
                     }
                 )
             }

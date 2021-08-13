@@ -1,7 +1,9 @@
 package gj.meteoras.ui.places
 
+import android.content.res.Resources
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import gj.meteoras.R
 import gj.meteoras.data.Place
 import gj.meteoras.repo.places.PlacesRepo
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +16,7 @@ import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 class PlacesViewModel(
+    private val resources: Resources,
     private val repo: PlacesRepo
 ) : ViewModel() {
 
@@ -42,7 +45,7 @@ class PlacesViewModel(
             }.onFailure { error ->
                 PlacesViewAction.ShowMessage(
                     message = error.translate(),
-                    action = "Retry"
+                    action = resources.getString(R.string.places_retry_action)
                 ) {
                     resume()
                 }.emit()
@@ -95,5 +98,5 @@ class PlacesViewModel(
     }
 
     private fun Throwable.translate(): String =
-        "Something wrong. Check network"
+        resources.getString(R.string.error_network)
 }

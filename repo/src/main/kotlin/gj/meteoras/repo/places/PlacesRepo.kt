@@ -42,11 +42,11 @@ class PlacesRepo(
 
         when {
             old == null -> api.place(code).toDao()?.let { new ->
-                Timber.d("Loaded $code place from api")
+                Timber.d("Loaded $code place")
                 new.copy(id = dao.insert(new).toInt())
             }
             !old.complete -> api.place(code).toDao()?.let { new ->
-                Timber.d("Loaded $code place from api")
+                Timber.d("Loaded $code place")
                 new.copy(id = old.id).also { dao.update(it) }
             }
             else -> old
@@ -69,12 +69,9 @@ class PlacesRepo(
             api.places()
         } ?: throw TimeoutException()
 
-        Timber.d("Loaded ${placesNet.size} places from api")
-
         val placesDao = placesNet.toDao()
         dao.setAll(placesDao)
-
-        Timber.d("Inserted ${placesDao.size} places into db")
+        Timber.d("Loaded ${placesDao.size} places")
 
         preferences.placesTimestamp = Instant.now()
     }

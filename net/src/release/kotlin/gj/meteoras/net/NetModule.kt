@@ -15,6 +15,15 @@ val netModule = module {
             .readTimeout(NetConfig.httpTimeout)
             .writeTimeout(NetConfig.httpTimeout)
             .cache(Cache(get<Context>().cacheDir, NetConfig.cacheSizeBytes))
+            .apply {
+                addNetworkInterceptor(
+                    HttpLoggingInterceptor(
+                        logger = { Timber.d(it) }
+                    ).apply {
+                        level = HttpLoggingInterceptor.Level.BASIC
+                    }
+                )
+            }
             .build()
     }
 }

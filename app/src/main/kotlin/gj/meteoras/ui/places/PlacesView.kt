@@ -14,6 +14,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import gj.meteoras.ext.compose.AnimatedVisibility
 import gj.meteoras.ext.compose.collectAsAction
 import gj.meteoras.ui.places.PlacesViewModel
@@ -66,6 +68,7 @@ fun PlacesView(
     )
 
     LaunchedEffect(true) {
+        Firebase.analytics.logEvent("view_places", null)
         model.resume()
     }
 }
