@@ -3,7 +3,9 @@ package gj.meteoras.repo.places
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import gj.meteoras.data.Place
 import gj.meteoras.db.Database
+import gj.meteoras.db.dao.PlacesDao
 import gj.meteoras.net.apiModule
 import gj.meteoras.repo.RepoConfig
 import gj.meteoras.repo.RepoPreferences
@@ -47,7 +49,7 @@ class PlacesRepoIntegartionTest : KoinTest {
     @MockK
     private lateinit var repoPreferences: RepoPreferences
 
-    val db : Database by inject()
+    val dao : PlacesDao by inject()
 
     val repo : PlacesRepo by inject()
 
@@ -117,15 +119,25 @@ class PlacesRepoIntegartionTest : KoinTest {
 
     @Test
     fun getPlace() {
-        Timber.d("TEST")
+        runBlocking {
+            dao.insertAll(
+                listOf(
+                    Place(
+                        name = "name",
+                        code = "vilnius",
+                        countryCode = "cc"
+                    )
+                )
+            )
+        }
 
-//        val result = runBlocking {
-//            repo.getPlace("code")
-//        }
-//
-//        assertThat(result.isSuccess).isTrue
-//        assertThat(result.getOrNull()?.name).isEqualTo("Vilnius")
-//        assertThat(result.getOrNull()?.country).isEqualTo("Lietuva")
+        val result = runBlocking {
+            repo.getPlace("vilnius")
+        }
+
+        assertThat(result.isSuccess).isTrue
+        assertThat(result.getOrNull()?.name).isEqualTo("Vilnius")
+        assertThat(result.getOrNull()?.country).isEqualTo("Lietuva")
     }
 }
 

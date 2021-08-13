@@ -9,6 +9,6 @@ interface MeteoApi {
     @GET("places")
     suspend fun places(): List<PlaceNet>
 
-    @GET("place/{code}")
+    @GET("places/{code}")
     suspend fun place(@Path("code") code: String): PlaceNet
 }
