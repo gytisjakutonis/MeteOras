@@ -24,6 +24,7 @@ import org.koin.test.KoinTest
 import org.koin.test.KoinTestRule
 import org.koin.test.inject
 import org.robolectric.annotation.Config
+import kotlin.test.fail
 
 @ExperimentalCoroutinesApi
 @Config(sdk = [28])
@@ -36,8 +37,8 @@ class PlacesDaoTest : KoinTest{
     val db : Database by inject()
 
     // using this rule forces main thread for room, check other comments below
-//    @get:Rule
-//    val executorRule = InstantTaskExecutorRule()
+    //@get:Rule
+    //val executorRule = InstantTaskExecutorRule()
 
     @get:Rule
     val koinTestRule = KoinTestRule.create {
@@ -51,9 +52,9 @@ class PlacesDaoTest : KoinTest{
                         Database::class.java,
                     )
                         // using main thread blocks runBlocking
-//                        .allowMainThreadQueries()
-//                        .setTransactionExecutor(dispatcher.asExecutor())
-//                        .setQueryExecutor(dispatcher.asExecutor())
+                        //.allowMainThreadQueries()
+                        //.setTransactionExecutor(dispatcher.asExecutor())
+                        //.setQueryExecutor(dispatcher.asExecutor())
                         .build()
                 }
             }
@@ -162,21 +163,21 @@ class PlacesDaoTest : KoinTest{
             db.places().insertAll(places)
         }
 
-        var placesCountDb = runBlocking {
+        var placesCount = runBlocking {
             db.places().countAll()
         }
 
-        assertThat(placesCountDb).isEqualTo(3)
+        assertThat(placesCount).isEqualTo(3)
 
         runBlocking {
             db.places().deleteAll()
         }
 
-        placesCountDb = runBlocking {
+        placesCount = runBlocking {
             db.places().countAll()
         }
 
-        assertThat(placesCountDb).isEqualTo(0)
+        assertThat(placesCount).isEqualTo(0)
     }
 
     @Test
@@ -216,21 +217,21 @@ class PlacesDaoTest : KoinTest{
             db.places().setAll(placesBefore)
         }
 
-        var placesCountDb = runBlocking {
+        var placesCount = runBlocking {
             db.places().countAll()
         }
 
-        assertThat(placesCountDb).isEqualTo(3)
+        assertThat(placesCount).isEqualTo(3)
 
         runBlocking {
             db.places().setAll(placesAfter)
         }
 
-        placesCountDb = runBlocking {
+        placesCount = runBlocking {
             db.places().countAll()
         }
 
-        assertThat(placesCountDb).isEqualTo(2)
+        assertThat(placesCount).isEqualTo(2)
     }
 
     @Test
@@ -290,5 +291,108 @@ class PlacesDaoTest : KoinTest{
         }
 
         assertThat(placesDb.size).isEqualTo(1)
+    }
+
+    @Test
+    fun update() {
+        val places = listOf(
+            Place(
+                code = "code1",
+                name = "name1",
+                countryCode = "countryCode1"
+            ),
+            Place(
+                code = "code2",
+                name = "name2",
+                countryCode = "countryCode1",
+                administrativeDivision = "administrativeDivision2"
+            ),
+        )
+
+        runBlocking {
+            db.places().insertAll(places)
+        }
+
+        var dbPlaces = runBlocking {
+            db.places().findByName("name2")
+        }
+
+        runBlocking {
+            db.places().update(dbPlaces[0].copy(name = "name22"))
+        }
+
+        dbPlaces = runBlocking {
+            db.places().findByName("name22")
+        }
+
+        assertThat(dbPlaces.isNotEmpty()).isTrue
+    }
+
+    @Test
+    fun findByCode() {
+        val places = listOf(
+            Place(
+                code = "code1",
+                name = "name1",
+                countryCode = "countryCode1"
+            ),
+            Place(
+                code = "code2",
+                name = "name2",
+                countryCode = "countryCode1",
+                administrativeDivision = "administrativeDivision2"
+            ),
+        )
+
+        runBlocking {
+            db.places().insertAll(places)
+        }
+
+        var place = runBlocking {
+            db.places().findByCode("code1")
+        }
+
+        assertThat(place?.name).isEqualTo("name1")
+
+        place = runBlocking {
+            db.places().findByCode("code3")
+        }
+
+        assertThat(place).isNull()
+    }
+
+    @Test
+    fun delete() {
+        val places = listOf(
+            Place(
+                code = "code1",
+                name = "name1",
+                countryCode = "countryCode1"
+            ),
+            Place(
+                code = "code2",
+                name = "name2",
+                countryCode = "countryCode1",
+                administrativeDivision = "administrativeDivision2"
+            ),
+        )
+
+        runBlocking {
+            db.places().insertAll(places)
+        }
+
+        val place = runBlocking {
+            db.places().findByCode("code1")
+        } ?: fail()
+
+        runBlocking {
+            db.places().delete(place)
+        }
+
+        val result = runBlocking {
+            db.places().findByCode("code1")
+        }
+
+        assertThat(result).isNull()
     }
 }

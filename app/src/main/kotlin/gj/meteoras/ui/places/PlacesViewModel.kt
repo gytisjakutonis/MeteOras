@@ -3,7 +3,6 @@ package gj.meteoras.ui.places
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import gj.meteoras.data.Place
-import gj.meteoras.ext.lang.timber
 import gj.meteoras.repo.places.PlacesRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
@@ -41,8 +40,6 @@ class PlacesViewModel(
                     filterByName(state.value.filter)
                 }
             }.onFailure { error ->
-                error.timber()
-
                 PlacesViewAction.ShowMessage(
                     message = error.translate(),
                     action = "Retry"
@@ -77,7 +74,6 @@ class PlacesViewModel(
             .onSuccess { value ->
                 state.value.copy(places = value, filter = name).emit()
             }.onFailure { error ->
-                error.timber()
                 state.value.copy(filter = name).emit()
             }
     }

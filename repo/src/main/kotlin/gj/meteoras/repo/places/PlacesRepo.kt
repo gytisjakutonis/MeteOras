@@ -4,6 +4,7 @@ import gj.meteoras.data.Place
 import gj.meteoras.db.dao.PlacesDao
 import gj.meteoras.ext.lang.runCatchingCancelable
 import gj.meteoras.ext.lang.then
+import gj.meteoras.ext.lang.timber
 import gj.meteoras.net.api.MeteoApi
 import gj.meteoras.repo.RepoConfig
 import gj.meteoras.repo.RepoPreferences
@@ -24,12 +25,28 @@ class PlacesRepo(
 
     suspend fun filterByName(name: String): Result<List<Place>> = runCatchingCancelable {
         dao.findByName("$name%")
+    }.apply {
+        exceptionOrNull()?.timber()
     }
 
     suspend fun syncPlaces(): Result<Boolean> = runCatchingCancelable {
         checkPlacesTimeout().then {
             loadPlaces()
         }
+    }.apply {
+        exceptionOrNull()?.timber()
+    }
+
+    suspend fun getPlace(code: String): Result<Place?> = runCatchingCancelable {
+        dao.findByCode(code)?.let { place ->
+            if (!place.complete) {
+                place.load()
+            } else {
+                place
+            }
+        }
+    }.apply {
+        exceptionOrNull()?.timber()
     }
 
     private fun checkPlacesTimeout(): Boolean {
@@ -54,5 +71,16 @@ class PlacesRepo(
         Timber.d("Cached ${placesDao.size} places into db")
 
         preferences.placesTimestamp = Instant.now()
+    }
+
+    private suspend fun Place.load(): Place? {
+        return api.place(code).toDao()?.copy(id = id)?.also { fresh ->
+            dao.update(fresh)
+            Timber.d("Loaded $code place from api")
+        } ?: run {
+            dao.delete(this)
+            Timber.d("Dropped $code place from dao")
+            null
+        }
     }
 }

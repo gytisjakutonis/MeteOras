@@ -2,7 +2,7 @@ package gj.meteoras.net.api
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import gj.meteoras.net.NetConfig
-import gj.meteoras.net.restModule
+import gj.meteoras.net.apiModule
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkAll
@@ -45,7 +45,7 @@ class MeteoApiTest : KoinTest {
             module {
                 single { OkHttpClient.Builder().build() }
             },
-            restModule
+            apiModule
         )
     }
 

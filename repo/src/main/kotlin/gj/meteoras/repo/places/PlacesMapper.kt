@@ -4,14 +4,15 @@ import gj.meteoras.data.Place
 import gj.meteoras.net.data.PlaceNet
 import timber.log.Timber
 
-fun List<PlaceNet>.toDao(): List<Place> = mapNotNull { placeNet ->
-    placeNet.toDao() ?: run {
-        Timber.e("Invalid place: $placeNet")
+fun List<PlaceNet>.toDao(): List<Place> = mapNotNull { it.toDao() }
+
+fun PlaceNet.toDao() : Place? = toDaoOrNull()
+    ?: run {
+        Timber.e("Invalid place: $this")
         null
     }
-}
 
-fun PlaceNet.toDao() : Place? {
+private fun PlaceNet.toDaoOrNull() : Place? {
     return Place(
         code = code ?: return null,
         name = name ?: return null,

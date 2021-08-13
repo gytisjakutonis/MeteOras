@@ -16,7 +16,7 @@ class NetModuleTest : KoinTest {
                 module {
                    single { OkHttpClient.Builder().build() }
                 },
-                restModule
+                apiModule
             )
         }
 
