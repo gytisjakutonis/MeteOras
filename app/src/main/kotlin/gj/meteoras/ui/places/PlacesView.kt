@@ -21,16 +21,17 @@ import gj.meteoras.ext.compose.collectAsAction
 import gj.meteoras.ui.places.PlacesViewModel
 import gj.meteoras.ui.theme.paddings
 import kotlinx.coroutines.Dispatchers
+import org.koin.androidx.compose.getViewModel
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 @ExperimentalAnimationApi
 @Composable
 fun PlacesView(
-    model: PlacesViewModel,
     scaffoldState: ScaffoldState,
     navController: NavHostController,
 ) {
+    val model: PlacesViewModel = getViewModel()
     val state = model.state.collectAsState(null, Dispatchers.Default)
     val action = model.action.collectAsAction(null)
 

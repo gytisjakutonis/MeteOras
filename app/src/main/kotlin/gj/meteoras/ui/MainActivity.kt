@@ -12,18 +12,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import gj.meteoras.ui.places.PlacesViewModel
 import gj.meteoras.ui.places.compose.PlaceView
 import gj.meteoras.ui.places.compose.PlacesView
 import gj.meteoras.ui.theme.Theme
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 @ExperimentalAnimationApi
 class MainActivity : ComponentActivity() {
-
-    val model: PlacesViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +43,6 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(Destination.Places.route) {
                             PlacesView(
-                                model = model,
                                 scaffoldState = scaffoldState,
                                 navController = navController,
                             )
