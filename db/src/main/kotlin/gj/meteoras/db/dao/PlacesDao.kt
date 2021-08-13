@@ -33,6 +33,9 @@ interface PlacesDao {
         insertAll(places)
     }
 
+    @Insert
+    suspend fun insert(place: Place): Long
+
     @Update
     suspend fun update(place: Place)
 

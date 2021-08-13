@@ -135,9 +135,39 @@ class PlacesRepoIntegartionTest : KoinTest {
             repo.getPlace("vilnius")
         }
 
+        val place = runBlocking {
+            dao.findByCode("vilnius")
+        }
+
         assertThat(result.isSuccess).isTrue
         assertThat(result.getOrNull()?.name).isEqualTo("Vilnius")
         assertThat(result.getOrNull()?.country).isEqualTo("Lietuva")
+        assertThat(place?.name).isEqualTo("Vilnius")
+    }
+
+    @Test
+    fun getPlaceNew() {
+        val result = runBlocking {
+            repo.getPlace("vilnius")
+        }
+
+        val place = runBlocking {
+            dao.findByCode("vilnius")
+        }
+
+        assertThat(result.isSuccess).isTrue
+        assertThat(result.getOrNull()?.name).isEqualTo("Vilnius")
+        assertThat(result.getOrNull()?.country).isEqualTo("Lietuva")
+        assertThat(place?.name).isEqualTo("Vilnius")
+    }
+
+    @Test
+    fun getPlaceInvalid() {
+        val result = runBlocking {
+            repo.getPlace("nothing")
+        }
+
+        assertThat(result.isSuccess).isFalse
     }
 }
 

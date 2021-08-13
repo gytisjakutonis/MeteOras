@@ -38,12 +38,18 @@ class PlacesRepo(
     }
 
     suspend fun getPlace(code: String): Result<Place?> = runCatchingCancelable {
-        dao.findByCode(code)?.let { place ->
-            if (!place.complete) {
-                place.load()
-            } else {
-                place
+        val old = dao.findByCode(code)
+
+        when {
+            old == null -> api.place(code).toDao()?.let { new ->
+                Timber.d("Loaded $code place from api")
+                new.copy(id = dao.insert(new).toInt())
             }
+            !old.complete -> api.place(code).toDao()?.let { new ->
+                Timber.d("Loaded $code place from api")
+                new.copy(id = old.id).also { dao.update(it) }
+            }
+            else -> old
         }
     }.apply {
         exceptionOrNull()?.timber()
@@ -68,19 +74,8 @@ class PlacesRepo(
         val placesDao = placesNet.toDao()
         dao.setAll(placesDao)
 
-        Timber.d("Cached ${placesDao.size} places into db")
+        Timber.d("Inserted ${placesDao.size} places into db")
 
         preferences.placesTimestamp = Instant.now()
-    }
-
-    private suspend fun Place.load(): Place? {
-        return api.place(code).toDao()?.copy(id = id)?.also { fresh ->
-            dao.update(fresh)
-            Timber.d("Loaded $code place from api")
-        } ?: run {
-            dao.delete(this)
-            Timber.d("Dropped $code place from dao")
-            null
-        }
     }
 }
