@@ -1,5 +1,6 @@
 package gj.meteoras.ui
 
+import gj.meteoras.ui.place.PlaceViewModel
 import gj.meteoras.ui.places.PlacesViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -15,5 +16,9 @@ val uiModule = module {
 
     viewModel {
         PlacesViewModel(get(), get())
+    }
+
+    viewModel {
+        PlaceViewModel(get(), get())
     }
 }

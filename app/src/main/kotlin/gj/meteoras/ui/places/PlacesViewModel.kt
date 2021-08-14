@@ -45,7 +45,7 @@ class PlacesViewModel(
             }.onFailure { error ->
                 PlacesViewAction.ShowMessage(
                     message = error.translate(),
-                    action = resources.getString(R.string.places_retry_action)
+                    action = resources.getString(R.string.action_retry)
                 ) {
                     resume()
                 }.emit()
@@ -65,13 +65,6 @@ class PlacesViewModel(
         }
     }
 
-    private suspend fun <T> work(block: suspend () -> T): T = try {
-        busy()
-        block()
-    } finally {
-        idle()
-    }
-
     private suspend fun filterByName(name: String) {
         repo.filterByName(name)
             .onSuccess { value ->
@@ -79,6 +72,13 @@ class PlacesViewModel(
             }.onFailure { error ->
                 state.value.copy(filter = name).emit()
             }
+    }
+
+    private suspend fun <T> work(block: suspend () -> T): T = try {
+        busy()
+        block()
+    } finally {
+        idle()
     }
 
     private suspend fun busy(busy: Boolean = true) {

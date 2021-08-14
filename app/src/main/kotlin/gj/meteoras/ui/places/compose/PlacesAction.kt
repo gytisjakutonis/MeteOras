@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import gj.meteoras.ext.compose.showSnackbar
-import gj.meteoras.ui.Destination
+import gj.meteoras.ui.place.PlaceDestination
 import gj.meteoras.ui.places.PlacesViewAction
 
 @Composable
@@ -24,8 +24,10 @@ fun PlacesAction(
         }
 
         is PlacesViewAction.OpenPlace -> LaunchedEffect(action) {
-            navController.navigate(Destination.Place.route) {
-                launchSingleTop = true
+            with (PlaceDestination) {
+                navController.navigate(action.place) {
+                    launchSingleTop = true
+                }
             }
         }
     }

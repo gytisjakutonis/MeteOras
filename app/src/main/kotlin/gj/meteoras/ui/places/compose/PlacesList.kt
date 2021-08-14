@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import gj.meteoras.data.Place
-import gj.meteoras.ui.compose.ItemDivider
 import gj.meteoras.ui.theme.body0
 import gj.meteoras.ui.theme.paddings
 
@@ -52,13 +52,13 @@ fun PlacesList(
                     .fillMaxWidth()
                     .horizontalScroll(scroll)
                     .padding(
-                        top = MaterialTheme.paddings.itemPadding,
-                        bottom = MaterialTheme.paddings.itemPadding
+                        top = MaterialTheme.paddings.mediumPadding,
+                        bottom = MaterialTheme.paddings.mediumPadding
                     )
                     .clickable { onClick(place) }
             )
 
-            ItemDivider()
+            Divider()
         }
     }
 

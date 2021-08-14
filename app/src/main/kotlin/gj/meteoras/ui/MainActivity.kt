@@ -9,11 +9,10 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.SideEffect
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import gj.meteoras.ui.places.compose.PlaceView
-import gj.meteoras.ui.places.compose.PlacesView
+import gj.meteoras.ui.place.PlaceDestination
+import gj.meteoras.ui.places.PlacesDestination
 import gj.meteoras.ui.theme.Theme
 import kotlin.time.ExperimentalTime
 
@@ -39,17 +38,17 @@ class MainActivity : ComponentActivity() {
                 Scaffold(scaffoldState = scaffoldState,) {
                     NavHost(
                         navController = navController,
-                        startDestination = Destination.Places.route
+                        startDestination = PlacesDestination.route
                     ) {
-                        composable(Destination.Places.route) {
-                            PlacesView(
+                        with (PlacesDestination) {
+                            build(
                                 scaffoldState = scaffoldState,
                                 navController = navController,
                             )
                         }
 
-                        composable(Destination.Place.route) {
-                            PlaceView(
+                        with (PlaceDestination) {
+                            build(
                                 scaffoldState = scaffoldState,
                                 navController = navController,
                             )
@@ -59,9 +58,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
-
-enum class Destination(val route: String) {
-    Places("places"),
-    Place("place")
 }
