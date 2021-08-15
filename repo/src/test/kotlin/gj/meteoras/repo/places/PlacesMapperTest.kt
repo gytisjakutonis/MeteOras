@@ -1,6 +1,7 @@
 package gj.meteoras.repo.places
 
 import gj.meteoras.net.data.PlaceNet
+import gj.meteoras.repo.toDao
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

@@ -1,13 +1,12 @@
-package gj.meteoras.repo.places
+package gj.meteoras.repo
 
+import gj.meteoras.data.Forecast
 import gj.meteoras.data.Place
 import gj.meteoras.db.dao.PlacesDao
 import gj.meteoras.ext.lang.runCatchingCancelable
 import gj.meteoras.ext.lang.then
 import gj.meteoras.ext.lang.timber
 import gj.meteoras.net.api.MeteoApi
-import gj.meteoras.repo.RepoConfig
-import gj.meteoras.repo.RepoPreferences
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import java.time.Duration
@@ -37,7 +36,7 @@ class PlacesRepo(
         exceptionOrNull()?.timber()
     }
 
-    suspend fun getPlace(code: String): Result<Place?> = runCatchingCancelable {
+    suspend fun getPlace(code: String): Result<Place> = runCatchingCancelable {
         val old = dao.findByCode(code)
 
         when {
@@ -50,7 +49,14 @@ class PlacesRepo(
                 new.copy(id = old.id).also { dao.update(it) }
             }
             else -> old
-        }
+        }!!
+    }.apply {
+        exceptionOrNull()?.timber()
+    }
+
+    suspend fun getForecast(code: String): Result<Forecast> = runCatchingCancelable {
+        Timber.d("Loaded $code forecast")
+        api.forecast(code).toDao()!!
     }.apply {
         exceptionOrNull()?.timber()
     }

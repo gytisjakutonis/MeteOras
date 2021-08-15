@@ -4,6 +4,7 @@ import gj.meteoras.data.Place
 import gj.meteoras.db.dao.PlacesDao
 import gj.meteoras.net.api.MeteoApi
 import gj.meteoras.net.data.PlaceNet
+import gj.meteoras.repo.PlacesRepo
 import gj.meteoras.repo.RepoConfig
 import gj.meteoras.repo.RepoPreferences
 import io.mockk.MockKAnnotations
