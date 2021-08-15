@@ -4,7 +4,7 @@ import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SnackbarResult
 
-fun SnackbarResult.then(block: () -> Unit) {
+inline fun SnackbarResult.then(block: () -> Unit) {
     if (this == SnackbarResult.ActionPerformed) {
         block()
     }
