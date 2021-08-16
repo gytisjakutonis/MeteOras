@@ -1,8 +1,8 @@
 package gj.meteoras.ui.place
 
-import gj.meteoras.data.Place
+import gj.meteoras.data.Forecast
 
 data class PlaceViewState(
-    val place: Place? = null,
+    val forecast: Forecast? = null,
     val busy: Boolean = false,
 )

@@ -10,7 +10,7 @@ sealed class PlacesViewAction {
         override val timestamp: Instant = Instant.now(),
         val message: String,
         val action: String? = null,
-        val callback: (() -> Unit)? = null
+        val callback: (suspend () -> Unit)? = null
     ) : PlacesViewAction()
 
     data class OpenPlace(

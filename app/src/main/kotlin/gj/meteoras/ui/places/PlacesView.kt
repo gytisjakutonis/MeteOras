@@ -11,6 +11,7 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -21,6 +22,7 @@ import gj.meteoras.ext.compose.collectAsAction
 import gj.meteoras.ui.places.PlacesViewModel
 import gj.meteoras.ui.theme.paddings
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.getViewModel
 import kotlin.time.ExperimentalTime
 
@@ -34,13 +36,16 @@ fun PlacesView(
     val model: PlacesViewModel = getViewModel()
     val state = model.state.collectAsState(null, Dispatchers.Default)
     val action = model.action.collectAsAction(null)
+    val scope = rememberCoroutineScope { Dispatchers.Default }
 
     Column(
         modifier = Modifier.padding(MaterialTheme.paddings.screenPadding)
     ) {
         PlacesFilter(
             value = state.value?.filter ?: "",
-            onValueChange = model::filter
+            onValueChange = { value ->
+                scope.launch { model.filter(value) }
+            }
         )
 
         Box(
@@ -52,7 +57,9 @@ fun PlacesView(
             AnimatedVisibility(visible = state.value?.busy == false) {
                 PlacesList(
                     items = state.value?.places ?: emptyList(),
-                    onClick = model::use
+                    onClick = { place ->
+                        scope.launch { model.use(place) }
+                    }
                 )
             }
 
@@ -70,6 +77,6 @@ fun PlacesView(
 
     LaunchedEffect(true) {
         Firebase.analytics.logEvent("view_places", null)
-        model.resume()
+        scope.launch { model.resume() }
     }
 }

@@ -2,14 +2,11 @@ package gj.meteoras.ui.place
 
 import android.content.res.Resources
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import gj.meteoras.R
-import gj.meteoras.repo.places.PlacesRepo
-import kotlinx.coroutines.Dispatchers
+import gj.meteoras.repo.PlacesRepo
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -24,24 +21,18 @@ class PlaceViewModel(
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
-    fun resume(code: String) {
-        viewModelScope.launch(Dispatchers.Default) {
-            work {
-                repo.getPlace(code)
-            }.onSuccess { result ->
-                if (result != null) {
-                    state.value.copy(place = result).emit()
-                } else {
-                    PlaceViewAction.GoBack.emit()
-                }
-            }.onFailure { error ->
-                PlaceViewAction.ShowMessage(
-                    message = error.translate(),
-                    action = resources.getString(R.string.action_retry)
-                ) {
-                    resume(code)
-                }.emit()
-            }
+    suspend fun resume(code: String) {
+        work {
+            repo.getForecast(code)
+        }.onSuccess { result ->
+            state.value.copy(forecast = result).emit()
+        }.onFailure { error ->
+            PlaceViewAction.ShowMessage(
+                message = error.translate(),
+                action = resources.getString(R.string.action_retry)
+            ) {
+                resume(code)
+            }.emit()
         }
     }
 

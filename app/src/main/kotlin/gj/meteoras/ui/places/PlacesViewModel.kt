@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import gj.meteoras.R
 import gj.meteoras.data.Place
-import gj.meteoras.repo.places.PlacesRepo
+import gj.meteoras.repo.PlacesRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,35 +34,29 @@ class PlacesViewModel(
         }
     }
 
-    fun resume() {
-        viewModelScope.launch(Dispatchers.Default) {
-            work {
-                repo.syncPlaces()
-            }.onSuccess { result ->
-                if (result) {
-                    filterByName(state.value.filter)
-                }
-            }.onFailure { error ->
-                PlacesViewAction.ShowMessage(
-                    message = error.translate(),
-                    action = resources.getString(R.string.action_retry)
-                ) {
-                    resume()
-                }.emit()
+    suspend fun resume() {
+        work {
+            repo.syncPlaces()
+        }.onSuccess { result ->
+            if (result) {
+                filterByName(state.value.filter)
             }
+        }.onFailure { error ->
+            PlacesViewAction.ShowMessage(
+                message = error.translate(),
+                action = resources.getString(R.string.action_retry)
+            ) {
+                resume()
+            }.emit()
         }
     }
 
-    fun filter(name: String) {
-        viewModelScope.launch(Dispatchers.Default) {
-            nameFilter.emit(name)
-        }
+    suspend fun filter(name: String) {
+        nameFilter.emit(name)
     }
 
-    fun use(place: Place) {
-        viewModelScope.launch(Dispatchers.Default) {
-            PlacesViewAction.OpenPlace(place = place).emit()
-        }
+    suspend fun use(place: Place) {
+        PlacesViewAction.OpenPlace(place = place).emit()
     }
 
     private suspend fun filterByName(name: String) {

@@ -1,4 +1,4 @@
-package gj.meteoras.ui.places.compose
+package gj.meteoras.ui.place.compose
 
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -6,21 +6,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import gj.meteoras.ext.compose.showSnackbar
-import gj.meteoras.ui.place.PlaceDestination
-import gj.meteoras.ui.places.PlacesViewAction
+import gj.meteoras.ui.place.PlaceViewAction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun PlacesAction(
-    action: PlacesViewAction?,
+fun PlaceAction(
+    action: PlaceViewAction?,
     snackbarHostState: SnackbarHostState,
     navController: NavHostController
 ) {
     val scope = rememberCoroutineScope { Dispatchers.Default }
 
     when (action) {
-        is PlacesViewAction.ShowMessage -> LaunchedEffect(action) {
+        is PlaceViewAction.ShowMessage -> LaunchedEffect(action) {
             snackbarHostState.showSnackbar(
                 message = action.message,
                 action = action.action,
@@ -30,12 +29,8 @@ fun PlacesAction(
             )
         }
 
-        is PlacesViewAction.OpenPlace -> LaunchedEffect(action) {
-            with (PlaceDestination) {
-                navController.navigate(action.place) {
-                    launchSingleTop = true
-                }
-            }
+        is PlaceViewAction.GoBack -> LaunchedEffect(action) {
+            navController.navigateUp()
         }
     }
 }
