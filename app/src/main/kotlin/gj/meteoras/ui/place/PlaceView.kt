@@ -1,7 +1,7 @@
 package gj.meteoras.ui.places.compose
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,10 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
-import gj.meteoras.ext.compose.AnimatedVisibility
 import gj.meteoras.ext.compose.collectAsAction
 import gj.meteoras.ui.place.PlaceViewModel
 import gj.meteoras.ui.place.compose.PlaceAction
+import gj.meteoras.ui.place.compose.TimestampsList
 import gj.meteoras.ui.theme.paddings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,23 +39,26 @@ fun PlaceView(
     val model: PlaceViewModel = getViewModel()
     val state = model.state.collectAsState(null, Dispatchers.Default)
     val action = model.action.collectAsAction(null)
-    val place = derivedStateOf { state.value?.forecast?.place }
     val scope = rememberCoroutineScope { Dispatchers.Default }
+    val place = derivedStateOf { state.value?.forecast?.place }
+    val timestamps = derivedStateOf { state.value?.forecast?.timestamps ?: emptyList() }
 
     Column(
-        modifier = Modifier.padding(MaterialTheme.paddings.screenPadding)
+        modifier = Modifier
+            .padding(MaterialTheme.paddings.screen)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box(
-            contentAlignment = Alignment.TopCenter,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            AnimatedVisibility(visible = state.value?.busy == false) {
+        AnimatedVisibility(visible = state.value?.busy == false,) {
+            Column {
                 PlaceHeader(place.value)
-            }
 
-            AnimatedVisibility(visible = state.value?.busy == true) {
-                CircularProgressIndicator()
+                TimestampsList(timestamps.value)
             }
+        }
+
+        AnimatedVisibility(visible = state.value?.busy == true) {
+            CircularProgressIndicator()
         }
     }
 

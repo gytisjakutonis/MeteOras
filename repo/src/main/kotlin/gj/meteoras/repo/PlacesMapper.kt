@@ -6,6 +6,8 @@ import gj.meteoras.net.data.ForecastNet
 import gj.meteoras.net.data.PlaceNet
 import timber.log.Timber
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
@@ -22,7 +24,7 @@ fun PlaceNet.toDao(): Place? = try {
                 latitude = it.latitude!!,
                 longitude = it.longitude!!
             )
-        }!!,
+        },
         country = country
     )
 } catch (error: NullPointerException) {
@@ -61,7 +63,7 @@ fun ForecastNet.toDao(): Forecast? = try {
 }
 
 private fun String.toInstant(): Instant? = try {
-    timeFormatter.parse(this, Instant::from)
+    timeFormatter.parse(this, LocalDateTime::from).toInstant(ZoneOffset.UTC)
 } catch (error: DateTimeParseException) {
     null
 }

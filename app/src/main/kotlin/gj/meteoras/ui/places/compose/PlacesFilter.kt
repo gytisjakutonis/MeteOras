@@ -2,8 +2,6 @@ package gj.meteoras.ui.places.compose
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -27,11 +25,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import gj.meteoras.R
-import gj.meteoras.ext.compose.AnimatedVisibility
 import gj.meteoras.ui.theme.supplementary
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
@@ -71,12 +69,11 @@ fun PlacesFilter(
             modifier = Modifier.weight(1f).padding(start = 5.dp, end = 5.dp),
             contentAlignment = Alignment.CenterStart
         ) {
-            AnimatedVisibility(visible = state.value.isEmpty(),) {
-                Text(
-                    text = stringResource(R.string.places_filter_hint),
-                    color = MaterialTheme.colors.supplementary,
-                )
-            }
+            Text(
+                modifier = Modifier.alpha(if (state.value.isEmpty()) 1f else 0f),
+                text = stringResource(R.string.places_filter_hint),
+                color = MaterialTheme.colors.supplementary,
+            )
 
             BasicTextField(
                 value = state.value,
@@ -98,11 +95,7 @@ fun PlacesFilter(
             }
         }
 
-        AnimatedVisibility(
-            visible = state.value.isNotEmpty(),
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
+        AnimatedVisibility(visible = state.value.isNotEmpty(),) {
             IconButton(
                 enabled = state.value.isNotEmpty(),
                 modifier = Modifier

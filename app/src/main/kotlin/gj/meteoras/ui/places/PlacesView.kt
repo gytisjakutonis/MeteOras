@@ -1,7 +1,7 @@
 package gj.meteoras.ui.places.compose
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,13 +11,13 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
-import gj.meteoras.ext.compose.AnimatedVisibility
 import gj.meteoras.ext.compose.collectAsAction
 import gj.meteoras.ui.places.PlacesViewModel
 import gj.meteoras.ui.theme.paddings
@@ -37,26 +37,28 @@ fun PlacesView(
     val state = model.state.collectAsState(null, Dispatchers.Default)
     val action = model.action.collectAsAction(null)
     val scope = rememberCoroutineScope { Dispatchers.Default }
+    val places = derivedStateOf { state.value?.places ?: emptyList() }
+    val filter = derivedStateOf { state.value?.filter ?: "" }
 
     Column(
-        modifier = Modifier.padding(MaterialTheme.paddings.screenPadding)
+        modifier = Modifier.padding(MaterialTheme.paddings.screen)
     ) {
         PlacesFilter(
-            value = state.value?.filter ?: "",
+            value = filter.value,
             onValueChange = { value ->
                 scope.launch { model.filter(value) }
             }
         )
 
-        Box(
-            contentAlignment = Alignment.TopCenter,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = MaterialTheme.paddings.screenPadding),
+                .padding(top = MaterialTheme.paddings.screen)
         ) {
             AnimatedVisibility(visible = state.value?.busy == false) {
                 PlacesList(
-                    items = state.value?.places ?: emptyList(),
+                    items = places.value,
                     onClick = { place ->
                         scope.launch { model.use(place) }
                     }

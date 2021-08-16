@@ -61,12 +61,12 @@ class PlacesRepo(
         exceptionOrNull()?.timber()
     }
 
-    private fun checkPlacesTimeout(): Boolean {
+    private suspend fun checkPlacesTimeout(): Boolean {
         val now = Instant.now()
         val lastLoad = preferences.placesTimestamp
         val duration = Duration.between(lastLoad, now)
 
-        return duration > RepoConfig.placesTimeout
+        return duration > RepoConfig.placesTimeout || dao.countAll() <= 0
     }
 
     private suspend fun loadPlaces() {

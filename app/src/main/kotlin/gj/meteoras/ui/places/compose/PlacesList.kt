@@ -52,8 +52,8 @@ fun PlacesList(
                     .fillMaxWidth()
                     .horizontalScroll(scroll)
                     .padding(
-                        top = MaterialTheme.paddings.mediumPadding,
-                        bottom = MaterialTheme.paddings.mediumPadding
+                        top = MaterialTheme.paddings.medium,
+                        bottom = MaterialTheme.paddings.medium
                     )
                     .clickable { onClick(place) }
             )
