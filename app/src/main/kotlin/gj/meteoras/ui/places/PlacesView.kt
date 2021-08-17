@@ -38,6 +38,15 @@ fun PlacesView(
     val action = model.action.collectAsAction(null)
     val scope = rememberCoroutineScope { Dispatchers.Default }
     val places = derivedStateOf { state.value?.places ?: emptyList() }
+    val favourites = derivedStateOf {
+        if (state.value?.filter.isNullOrEmpty()) {
+            state.value?.favourites?.mapNotNull { code ->
+                state.value?.places?.firstOrNull { it.code == code }
+            } ?: emptyList()
+        } else {
+            emptyList()
+        }
+    }
     val filter = derivedStateOf { state.value?.filter ?: "" }
 
     Column(
@@ -59,6 +68,7 @@ fun PlacesView(
             AnimatedVisibility(visible = state.value?.busy == false) {
                 PlacesList(
                     items = places.value,
+                    favourites = favourites.value,
                     onClick = { place ->
                         scope.launch { model.use(place) }
                     }

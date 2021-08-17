@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import gj.meteoras.R
 import gj.meteoras.data.Place
 import gj.meteoras.repo.PlacesRepo
+import gj.meteoras.ui.UiConfig
+import gj.meteoras.ui.UiPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,6 +19,7 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 class PlacesViewModel(
     private val resources: Resources,
+    private val preferences: UiPreferences,
     private val repo: PlacesRepo
 ) : ViewModel() {
 
@@ -35,6 +38,8 @@ class PlacesViewModel(
     }
 
     suspend fun resume() {
+        state.value.copy(favourites = preferences.favouritePlaces).emit()
+
         work {
             repo.syncPlaces()
         }.onSuccess { result ->
@@ -56,7 +61,16 @@ class PlacesViewModel(
     }
 
     suspend fun use(place: Place) {
+        addFavourrite(place)
         PlacesViewAction.OpenPlace(place = place).emit()
+    }
+
+    private suspend fun addFavourrite(place: Place) {
+        val favourites = state.value.favourites.toMutableList()
+        favourites.remove(place.code)
+        favourites.add(0, place.code)
+        state.value.copy(favourites = favourites.take(UiConfig.favouritesLimit)).emit()
+        preferences.favouritePlaces = state.value.favourites
     }
 
     private suspend fun filterByName(name: String) {
