@@ -42,8 +42,9 @@ fun PlaceView(
     val state = model.state.collectAsState(null, Dispatchers.Default)
     val action = model.action.collectAsAction(null)
     val scope = rememberCoroutineScope { Dispatchers.Default }
-    val place = derivedStateOf { state.value?.forecast?.place }
-    val timestamps = derivedStateOf { state.value?.forecast?.timestamps ?: emptyList() }
+    val forecast = derivedStateOf { state.value?.forecast }
+    val place = derivedStateOf { forecast.value?.place }
+    val timestamps = derivedStateOf { forecast.value?.timestamps ?: emptyList() }
 
     Column(
         modifier = Modifier
@@ -55,7 +56,12 @@ fun PlaceView(
             Column {
                 PlaceHeader(place.value)
 
-                TimestampsList(timestamps.value)
+                place.value?.let {
+                    TimestampsList(
+                        place = it,
+                        timestamps = timestamps.value
+                    )
+                }
             }
         }
 

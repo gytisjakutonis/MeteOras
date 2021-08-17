@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import gj.meteoras.R
 import gj.meteoras.data.Forecast
+import gj.meteoras.data.Place
 import gj.meteoras.ui.theme.cold
 import gj.meteoras.ui.theme.hot
 import gj.meteoras.ui.theme.paddings
@@ -31,6 +32,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun Timestamp(
+    place: Place,
     timestamp: Forecast.Timestamp
 ) {
     val time = derivedStateOf {
@@ -60,7 +62,12 @@ fun Timestamp(
             horizontalAlignment = Alignment.End,
             modifier = Modifier.fillMaxWidth().weight(1f)
         ) {
-            Weather(timestamp.condition,)
+            place.coordinates?.let {
+                Weather(
+                    coordinates = it,
+                    timestamp = timestamp,
+                )
+            }
         }
 
         Text(

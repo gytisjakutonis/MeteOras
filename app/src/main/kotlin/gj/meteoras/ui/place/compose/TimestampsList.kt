@@ -12,16 +12,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.Modifier
 import gj.meteoras.data.Forecast
+import gj.meteoras.data.Place
 import java.time.ZoneId
 
 @ExperimentalFoundationApi
 @Composable
 fun TimestampsList(
-    items: List<Forecast.Timestamp>
+    place: Place,
+    timestamps: List<Forecast.Timestamp>
 ) {
     val listState = rememberLazyListState()
     val grouped = derivedStateOf {
-        items.groupBy { it.time.atZone(ZoneId.systemDefault()).toLocalDate() }
+        timestamps.groupBy { it.time.atZone(ZoneId.systemDefault()).toLocalDate() }
     }
 
     LazyColumn(state = listState,) {
@@ -33,12 +35,15 @@ fun TimestampsList(
             }
 
             items(timestamps) { timestamp ->
-                Timestamp(timestamp)
+                Timestamp(
+                    place = place,
+                    timestamp = timestamp
+                )
             }
         }
     }
 
-    LaunchedEffect(items) {
+    LaunchedEffect(timestamps) {
         listState.scrollToItem(0)
     }
 }

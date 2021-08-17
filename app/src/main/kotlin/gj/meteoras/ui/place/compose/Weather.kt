@@ -10,16 +10,34 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import gj.meteoras.R
 import gj.meteoras.data.Forecast
+import gj.meteoras.data.Place
+import org.shredzone.commons.suncalc.SunTimes
+import java.time.ZoneId
 
 @Composable
 fun Weather(
-    condition: Forecast.Timestamp.Condition,
+    coordinates: Place.Coordinates,
+    timestamp: Forecast.Timestamp,
 ) {
+    val sun = derivedStateOf {
+        SunTimes.compute()
+            .on(timestamp.time.atZone(utcZoneId).toLocalDate())
+            .at(coordinates.latitude, coordinates.longitude)
+            .execute()
+            .let { times ->
+                times.isAlwaysUp
+                        || times.rise?.toInstant()?.isBefore(timestamp.time) == true
+                        && times.set?.toInstant()?.isAfter(timestamp.time) == true
+            }
+    }
+
     val image = derivedStateOf {
-        when (condition) {
-            Forecast.Timestamp.Condition.Clear -> R.drawable.ic_day
+        when (timestamp.condition) {
+            Forecast.Timestamp.Condition.Clear ->
+                if (sun.value) R.drawable.ic_day else R.drawable.ic_night
             Forecast.Timestamp.Condition.IsolatedClound,
-            Forecast.Timestamp.Condition.ScatteredClouds -> R.drawable.ic_clouds_day
+            Forecast.Timestamp.Condition.ScatteredClouds ->
+                if (sun.value) R.drawable.ic_clouds_day else R.drawable.ic_clouds_night
             Forecast.Timestamp.Condition.Overcast -> R.drawable.ic_clouds
             Forecast.Timestamp.Condition.LightRain -> R.drawable.ic_light_rain
             Forecast.Timestamp.Condition.ModerateRain -> R.drawable.ic_moderate_rain
@@ -40,3 +58,5 @@ fun Weather(
         modifier = Modifier.size(24.dp)
     )
 }
+
+private val utcZoneId = ZoneId.of("UTC")
