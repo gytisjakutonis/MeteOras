@@ -6,4 +6,6 @@
     <string name="error_network">Something wrong. Check network</string>
 
     <string name="places_filter_hint">Pick a place</string>
+
+    <string name="timestamp_ms">m/s</string>
 </resources>

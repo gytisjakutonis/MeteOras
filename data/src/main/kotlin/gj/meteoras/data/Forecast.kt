@@ -19,25 +19,25 @@ data class Forecast(
         val relativeHumidity: Int,
         val totalPrecipitation: Double,
         val condition: Condition
-    )
+    ) {
+        enum class Condition(val value: String) {
+            Clear("clear"),
+            IsolatedClound("isolated-clouds"),
+            ScatteredClouds("scattered-clouds"),
+            Overcast("overcast"),
+            LightRain("light-rain"),
+            ModerateRain("moderate-rain"),
+            HeavyRain("heavy-rain"),
+            Sleet("sleet"),
+            LightSnow("light-snow"),
+            ModerateSnow("moderate-snow"),
+            HeavySnow("heavy-snow"),
+            Fog("fog"),
+            NA("na"),
+        }
+    }
 
     enum class Type(val value: String) {
         LongTerm("long-term")
-    }
-
-    enum class Condition(val value: String) {
-        Clear("clear"),
-        IsolatedClound("isolated-clouds"),
-        ScatteredClouds("scattered-clouds"),
-        Overcast("overcast"),
-        LightRain("light-rain"),
-        ModerateRain("moderate-rain"),
-        HeavyRain("heavy-rain"),
-        Sleet("sleet"),
-        LightSnow("light-snow"),
-        ModerateSnow("moderate-snow"),
-        HeavySnow("heavy-snow"),
-        Fog("fog"),
-        NA("na"),
     }
 }

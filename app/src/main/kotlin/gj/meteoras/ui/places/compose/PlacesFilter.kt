@@ -59,7 +59,7 @@ fun PlacesFilter(
             .padding(top = 5.dp, bottom = 5.dp)
     ) {
         Icon(
-            Icons.Filled.Search,
+            imageVector = Icons.Filled.Search,
             contentDescription = null,
             tint = MaterialTheme.colors.supplementary,
             modifier = Modifier.padding(start = 5.dp)
@@ -104,7 +104,7 @@ fun PlacesFilter(
                 onClick = { state.value = "" }
             ) {
                 Icon(
-                    Icons.Filled.Clear,
+                    imageVector = Icons.Filled.Clear,
                     contentDescription = null,
                     tint = MaterialTheme.colors.supplementary,
                 )

@@ -4,7 +4,16 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/ic_close_grey.xml" value="0.23541666666666666" />
+        <entry key="app/src/main/res/drawable/ic_cloudy.xml" value="0.2760416666666667" />
+        <entry key="app/src/main/res/drawable/ic_day.xml" value="0.2760416666666667" />
+        <entry key="app/src/main/res/drawable/ic_heavy_clouds_day.xml" value="0.2760416666666667" />
+        <entry key="app/src/main/res/drawable/ic_heavy_clouds_night.xml" value="0.2760416666666667" />
+        <entry key="app/src/main/res/drawable/ic_heavy_rain.xml" value="0.2760416666666667" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.23541666666666666" />
+        <entry key="app/src/main/res/drawable/ic_light_snow.xml" value="0.2760416666666667" />
+        <entry key="app/src/main/res/drawable/ic_na.xml" value="0.2760416666666667" />
+        <entry key="app/src/main/res/drawable/ic_rainy_6.xml" value="0.2760416666666667" />
+        <entry key="app/src/main/res/drawable/ic_wi_snow.xml" value="0.2760416666666667" />
       </map>
     </option>
   </component>

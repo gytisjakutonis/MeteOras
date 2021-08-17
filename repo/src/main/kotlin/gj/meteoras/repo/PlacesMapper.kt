@@ -43,7 +43,7 @@ fun ForecastNet.Timestamp.toDao(): Forecast.Timestamp? = try {
         seaLevelPressure = seaLevelPressure!!,
         relativeHumidity = relativeHumidity!!,
         totalPrecipitation = totalPrecipitation!!,
-        condition = Forecast.Condition.values().firstOrNull { it.value == conditionCode }!!
+        condition = Forecast.Timestamp.Condition.values().firstOrNull { it.value == conditionCode }!!
     )
 } catch (error: NullPointerException) {
     Timber.e("Invalid timestamp: $this")
