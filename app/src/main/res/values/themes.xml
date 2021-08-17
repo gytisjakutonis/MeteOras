@@ -4,4 +4,6 @@
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+    <color name="ic_launcher_background">#66bb6a</color>
 </resources>

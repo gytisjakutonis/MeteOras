@@ -1,6 +1,7 @@
 package gj.meteoras.ui.place
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ScaffoldState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -16,6 +17,7 @@ object PlaceDestination {
 
     private val code = navArgument("code") { type = NavType.StringType }
 
+    @ExperimentalFoundationApi
     @ExperimentalTime
     @ExperimentalAnimationApi
     fun NavGraphBuilder.build(
