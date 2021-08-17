@@ -15,7 +15,7 @@ interface PlacesDao {
     @Query("SELECT count(*) FROM place")
     suspend fun countAll(): Long
 
-    @Query("SELECT * FROM place WHERE lower(name) LIKE lower(:name)")
+    @Query("SELECT * FROM place WHERE lower(normalisedName) LIKE lower(:name)")
     suspend fun findByName(name: String): List<Place>
 
     @Query("SELECT * FROM place WHERE code=:code")
