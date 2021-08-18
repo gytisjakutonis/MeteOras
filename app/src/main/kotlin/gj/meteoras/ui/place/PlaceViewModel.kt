@@ -7,6 +7,8 @@ import gj.meteoras.repo.PlacesRepo
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -20,13 +22,14 @@ class PlaceViewModel(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
+    private val stateMutex = Mutex()
 
     suspend fun resume(code: String) {
         work {
             repo.getForecast(code)
-        }.onSuccess { result ->
+        }?.onSuccess { result ->
             state.value.copy(forecast = result).emit()
-        }.onFailure { error ->
+        }?.onFailure { error ->
             PlaceViewAction.ShowMessage(
                 message = error.translate(),
                 action = resources.getString(R.string.action_retry)
@@ -36,11 +39,17 @@ class PlaceViewModel(
         }
     }
 
-    private suspend fun <T> work(block: suspend () -> T): T = try {
-        busy()
-        block()
-    } finally {
-        idle()
+    private suspend fun <T> work(block: suspend () -> T): T? {
+        stateMutex.withLock {
+            if (state.value.busy) return null
+            else busy()
+        }
+
+        return try {
+            block()
+        } finally {
+            idle()
+        }
     }
 
     private suspend fun busy(busy: Boolean = true) {

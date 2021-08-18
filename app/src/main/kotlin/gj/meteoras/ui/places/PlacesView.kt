@@ -65,15 +65,13 @@ fun PlacesView(
                 .fillMaxWidth()
                 .padding(top = MaterialTheme.paddings.screen)
         ) {
-            AnimatedVisibility(visible = state.value?.busy == false) {
-                PlacesList(
-                    items = places.value,
-                    favourites = favourites.value,
-                    onClick = { place ->
-                        scope.launch { model.use(place) }
-                    }
-                )
-            }
+            PlacesList(
+                items = places.value,
+                favourites = favourites.value,
+                onClick = { place ->
+                    scope.launch { model.use(place) }
+                }
+            )
 
             AnimatedVisibility(visible = state.value?.busy == true) {
                 CircularProgressIndicator()

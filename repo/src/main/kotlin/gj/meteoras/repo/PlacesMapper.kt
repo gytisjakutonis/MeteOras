@@ -2,6 +2,7 @@ package gj.meteoras.repo
 
 import gj.meteoras.data.Forecast
 import gj.meteoras.data.Place
+import gj.meteoras.ext.lang.normalise
 import gj.meteoras.net.data.ForecastNet
 import gj.meteoras.net.data.PlaceNet
 import timber.log.Timber
@@ -17,6 +18,7 @@ fun PlaceNet.toDao(): Place? = try {
     Place(
         code = code!!,
         name = name!!,
+        normalisedName = name!!.normalise(),
         administrativeDivision = administrativeDivision,
         countryCode = countryCode!!,
         coordinates = coordinates?.let {

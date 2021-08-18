@@ -106,7 +106,7 @@ fun Timestamp(
             imageVector = Icons.Outlined.Navigation,
             contentDescription = null,
             tint = MaterialTheme.colors.secondaryVariant,
-            modifier = Modifier.rotate(timestamp.windDirection.toFloat())
+            modifier = Modifier.rotate(timestamp.windDirection.toFloat() + 180)
         )
     }
 }

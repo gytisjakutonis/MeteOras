@@ -52,16 +52,19 @@ fun PlaceView(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        AnimatedVisibility(visible = state.value?.busy == false,) {
-            Column {
-                PlaceHeader(place.value)
+        Column {
+            PlaceHeader(place.value)
 
-                place.value?.let {
-                    TimestampsList(
-                        place = it,
-                        timestamps = timestamps.value
-                    )
-                }
+            place.value?.let {
+                TimestampsList(
+                    place = it,
+                    timestamps = timestamps.value,
+                    onRefresh = {
+                        scope.launch {
+                            model.resume(code)
+                        }
+                    }
+                )
             }
         }
 

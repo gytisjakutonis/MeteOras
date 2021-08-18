@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.Modifier
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import gj.meteoras.data.Forecast
 import gj.meteoras.data.Place
 import java.time.ZoneId
@@ -19,26 +21,33 @@ import java.time.ZoneId
 @Composable
 fun TimestampsList(
     place: Place,
-    timestamps: List<Forecast.Timestamp>
+    timestamps: List<Forecast.Timestamp>,
+    onRefresh: () -> Unit
 ) {
     val listState = rememberLazyListState()
+    val refreshState = rememberSwipeRefreshState(false)
     val grouped = derivedStateOf {
         timestamps.groupBy { it.time.atZone(ZoneId.systemDefault()).toLocalDate() }
     }
 
-    LazyColumn(state = listState,) {
-        grouped.value.forEach { (date, timestamps) ->
-            stickyHeader(key = date) {
-                Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
-                    Day(date)
+    SwipeRefresh(
+        state = refreshState,
+        onRefresh = onRefresh
+    ) {
+        LazyColumn(state = listState,) {
+            grouped.value.forEach { (date, timestamps) ->
+                stickyHeader(key = date) {
+                    Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                        Day(date)
+                    }
                 }
-            }
 
-            items(timestamps) { timestamp ->
-                Timestamp(
-                    place = place,
-                    timestamp = timestamp
-                )
+                items(timestamps) { timestamp ->
+                    Timestamp(
+                        place = place,
+                        timestamp = timestamp
+                    )
+                }
             }
         }
     }
