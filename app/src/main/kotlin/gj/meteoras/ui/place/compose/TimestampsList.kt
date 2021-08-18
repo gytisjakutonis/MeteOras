@@ -20,7 +20,7 @@ import java.time.ZoneId
 @ExperimentalFoundationApi
 @Composable
 fun TimestampsList(
-    place: Place,
+    place: Place?,
     timestamps: List<Forecast.Timestamp>,
     onRefresh: () -> Unit
 ) {

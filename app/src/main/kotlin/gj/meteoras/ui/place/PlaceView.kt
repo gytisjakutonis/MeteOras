@@ -53,11 +53,13 @@ fun PlaceView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column {
-            PlaceHeader(place.value)
+            AnimatedVisibility(visible = place.value != null) {
+                PlaceHeader(place.value)
+            }
 
-            place.value?.let {
+            AnimatedVisibility(visible = state.value?.busy == false) {
                 TimestampsList(
-                    place = it,
+                    place = place.value,
                     timestamps = timestamps.value,
                     onRefresh = {
                         scope.launch {

@@ -61,11 +61,11 @@ class PlacesViewModel(
     }
 
     suspend fun use(place: Place) {
-        addFavourrite(place)
+        addFavourite(place)
         PlacesViewAction.OpenPlace(place = place).emit()
     }
 
-    private suspend fun addFavourrite(place: Place) {
+    private suspend fun addFavourite(place: Place) {
         val favourites = state.value.favourites.toMutableList()
         favourites.remove(place.code)
         favourites.add(0, place.code)

@@ -32,7 +32,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun Timestamp(
-    place: Place,
+    place: Place?,
     timestamp: Forecast.Timestamp
 ) {
     val time = derivedStateOf {
@@ -62,7 +62,7 @@ fun Timestamp(
             horizontalAlignment = Alignment.End,
             modifier = Modifier.fillMaxWidth().weight(1f)
         ) {
-            place.coordinates?.let {
+            place?.coordinates?.let {
                 Weather(
                     coordinates = it,
                     timestamp = timestamp,
