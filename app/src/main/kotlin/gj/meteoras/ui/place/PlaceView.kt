@@ -1,5 +1,6 @@
 package gj.meteoras.ui.places.compose
 
+import android.os.Bundle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -82,7 +83,12 @@ fun PlaceView(
     )
 
     LaunchedEffect(true) {
-        Firebase.analytics.logEvent("view_place", null)
+        Firebase.analytics.logEvent(
+            "view_place",
+            Bundle().apply {
+                putString("code", code)
+            }
+        )
         scope.launch { model.resume(code) }
     }
 }
