@@ -82,17 +82,20 @@ class PlacesDaoTest : KoinTest{
             Place(
                 code = "code1",
                 name = "name1",
-                countryCode = "countryCode1"
+                countryCode = "countryCode1",
+                normalisedName = "name1"
             ),
             Place(
                 code = "code2",
                 name = "name1",
+                normalisedName = "name1",
                 countryCode = "countryCode1",
                 administrativeDivision = "administrativeDivision2"
             ),
             Place(
                 code = "code3",
                 name = "name3",
+                normalisedName = "name3",
                 countryCode = "countryCode3",
                 administrativeDivision = "administrativeDivision2",
                 coordinates = Place.Coordinates(
@@ -119,11 +122,13 @@ class PlacesDaoTest : KoinTest{
             Place(
                 code = "code1",
                 name = "name1",
+                normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
             Place(
                 code = "code1",
                 name = "name1",
+                normalisedName = "name1",
                 countryCode = "countryCode1",
             ),
         )
@@ -145,16 +150,19 @@ class PlacesDaoTest : KoinTest{
             Place(
                 code = "code1",
                 name = "name1",
+                normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
             Place(
                 code = "code2",
                 name = "name1",
+                normalisedName = "name1",
                 countryCode = "countryCode1",
             ),
             Place(
                 code = "code3",
                 name = "name3",
+                normalisedName = "name3",
                 countryCode = "countryCode3",
             ),
         )
@@ -186,16 +194,19 @@ class PlacesDaoTest : KoinTest{
             Place(
                 code = "code1",
                 name = "name1",
+                normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
             Place(
                 code = "code2",
                 name = "name1",
+                normalisedName = "name1",
                 countryCode = "countryCode1",
             ),
             Place(
                 code = "code3",
                 name = "name3",
+                normalisedName = "name3",
                 countryCode = "countryCode3",
             ),
         )
@@ -204,11 +215,13 @@ class PlacesDaoTest : KoinTest{
             Place(
                 code = "code4",
                 name = "name1",
+                normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
             Place(
                 code = "code5",
                 name = "name1",
+                normalisedName = "name1",
                 countryCode = "countryCode1",
             )
         )
@@ -235,31 +248,36 @@ class PlacesDaoTest : KoinTest{
     }
 
     @Test
-    fun findAll() {
+    fun findByName() {
         val places = listOf(
             Place(
                 code = "code1",
                 name = "abc",
+                normalisedName = "abc",
                 countryCode = "countryCode1"
             ),
             Place(
                 code = "code2",
                 name = "abcd",
+                normalisedName = "abcd",
                 countryCode = "countryCode1",
             ),
             Place(
                 code = "code3",
                 name = "abcde",
+                normalisedName = "abcde",
                 countryCode = "countryCode1",
             ),
             Place(
                 code = "code4",
                 name = "fgh",
+                normalisedName = "fgh",
                 countryCode = "countryCode1",
             ),
             Place(
                 code = "code5",
                 name = "fghi",
+                normalisedName = "fghi",
                 countryCode = "countryCode1",
             ),
         )
@@ -299,11 +317,13 @@ class PlacesDaoTest : KoinTest{
             Place(
                 code = "code1",
                 name = "name1",
+                normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
             Place(
                 code = "code2",
                 name = "name2",
+                normalisedName = "name2",
                 countryCode = "countryCode1",
                 administrativeDivision = "administrativeDivision2"
             ),
@@ -318,7 +338,7 @@ class PlacesDaoTest : KoinTest{
         }
 
         runBlocking {
-            db.places().update(dbPlaces[0].copy(name = "name22"))
+            db.places().update(dbPlaces[0].copy(normalisedName = "name22"))
         }
 
         dbPlaces = runBlocking {
@@ -334,11 +354,13 @@ class PlacesDaoTest : KoinTest{
             Place(
                 code = "code1",
                 name = "name1",
+                normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
             Place(
                 code = "code2",
                 name = "name2",
+                normalisedName = "name2",
                 countryCode = "countryCode1",
                 administrativeDivision = "administrativeDivision2"
             ),
@@ -367,11 +389,13 @@ class PlacesDaoTest : KoinTest{
             Place(
                 code = "code1",
                 name = "name1",
+                normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
             Place(
                 code = "code2",
                 name = "name2",
+                normalisedName = "name2",
                 countryCode = "countryCode1",
                 administrativeDivision = "administrativeDivision2"
             ),

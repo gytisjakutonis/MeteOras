@@ -112,4 +112,95 @@ class MeteoApiTest : KoinTest {
         assertThat(places[0].code).isEqualTo("abromiskes")
         assertThat(places[1].name).isEqualTo("Acokavai")
     }
+
+    @Test
+    fun loadPlace() {
+        server.dispatcher = object : Dispatcher() {
+            override fun dispatch(request: RecordedRequest) = MockResponse().setBody(
+                """
+                    {
+                        "code":"abromiskes",
+                        "name":"Acokavai",
+                        "administrativeDivision":"Elektr\u0117n\u0173 savivaldyb\u0117",
+                        "countryCode":"LT",
+                        "country":"Lietuva",
+                        "coordinates":{
+                            "latitude":1.1,
+                            "longitude":2.2
+                        }
+                    }
+                """.trimIndent()
+            )
+        }
+
+        val place = runBlocking {
+            meteo.place("code")
+        }
+
+        assertThat(place.code).isEqualTo("abromiskes")
+        assertThat(place.name).isEqualTo("Acokavai")
+        assertThat(place.country).isEqualTo("Lietuva")
+        assertThat(place.coordinates?.latitude).isEqualTo(1.1)
+    }
+
+    @Test
+    fun loadForecast() {
+        server.dispatcher = object : Dispatcher() {
+            override fun dispatch(request: RecordedRequest) = MockResponse().setBody(
+                """
+                    {
+                        "place":{
+                            "code":"abromiskes",
+                            "name":"Acokavai",
+                            "administrativeDivision":"Elektr\u0117n\u0173 savivaldyb\u0117",
+                            "countryCode":"LT",
+                            "country":"Lietuva",
+                            "coordinates":{
+                                "latitude":1.1,
+                                "longitude":2.2
+                            }
+                        },
+                        "forecastType":"long-term",
+                        "forecastCreationTimeUtc":"2021-08-24 07:52:26",
+                        "forecastTimestamps":[
+                            {
+                                "forecastTimeUtc":"2021-08-24 08:00:00",
+                                "airTemperature":16,
+                                "windSpeed":4,
+                                "windGust":8,
+                                "windDirection":10,
+                                "cloudCover":2,
+                                "seaLevelPressure":1023,
+                                "relativeHumidity":54,
+                                "totalPrecipitation":0,
+                                "conditionCode":"clear"
+                            },
+                            {
+                                "forecastTimeUtc":"2021-08-24 09:00:00",
+                                "airTemperature":16.9,
+                                "windSpeed":4,
+                                "windGust":9,
+                                "windDirection":7,
+                                "cloudCover":4,
+                                "seaLevelPressure":1022,
+                                "relativeHumidity":48,
+                                "totalPrecipitation":0,
+                                "conditionCode":"clear"
+                            }
+                        ]
+                    }
+                """.trimIndent()
+            )
+        }
+
+        val forecast = runBlocking {
+            meteo.forecast("code")
+        }
+
+        assertThat(forecast.place?.code).isEqualTo("abromiskes")
+        assertThat(forecast.place?.name).isEqualTo("Acokavai")
+        assertThat(forecast.forecastTimestamps?.get(0)?.windSpeed).isEqualTo(4)
+        assertThat(forecast.forecastTimestamps?.get(0)?.conditionCode).isEqualTo("clear")
+        assertThat(forecast.forecastTimestamps?.get(1)?.forecastTimeUtc).isEqualTo("2021-08-24 09:00:00")
+    }
 }

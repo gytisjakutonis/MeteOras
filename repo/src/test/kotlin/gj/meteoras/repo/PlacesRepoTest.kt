@@ -1,18 +1,20 @@
-package gj.meteoras.repo.places
+package gj.meteoras.repo
 
+import gj.meteoras.data.Forecast
 import gj.meteoras.data.Place
 import gj.meteoras.db.dao.PlacesDao
+import gj.meteoras.ext.lang.normalise
 import gj.meteoras.net.api.MeteoApi
+import gj.meteoras.net.data.ForecastNet
 import gj.meteoras.net.data.PlaceNet
-import gj.meteoras.repo.PlacesRepo
-import gj.meteoras.repo.RepoConfig
-import gj.meteoras.repo.RepoPreferences
+import gj.meteoras.test.TimberRule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
@@ -58,6 +60,9 @@ class PlacesRepoTest : KoinTest {
         )
     }
 
+    @get:Rule
+    val timberRule = TimberRule()
+
     val repo : PlacesRepo by inject()
 
     val dispatcher = TestCoroutineDispatcher()
@@ -67,6 +72,8 @@ class PlacesRepoTest : KoinTest {
         MockKAnnotations.init(this, relaxUnitFun = true, relaxed = true)
         mockkObject(RepoConfig)
         Dispatchers.setMain(dispatcher)
+        mockkStatic(String::normalise)
+        every { any<String>().normalise() } returns "normalised"
     }
 
     @After
@@ -141,6 +148,7 @@ class PlacesRepoTest : KoinTest {
         val timestamp = Instant.now().minusSeconds(RepoConfig.placesTimeout.seconds).plusSeconds(2)
 
         coEvery { meteoApi.places() } returns emptyList()
+        coEvery { placesDao.countAll() } returns 10
         every { repoPreferences.placesTimestamp } returns timestamp
 
         val result = runBlocking {
@@ -187,6 +195,7 @@ class PlacesRepoTest : KoinTest {
             id = 123,
             code = "code",
             name = "name",
+            normalisedName = "name",
             countryCode = "cc",
             country = "country",
             coordinates = Place.Coordinates(
@@ -223,6 +232,7 @@ class PlacesRepoTest : KoinTest {
             id = 123,
             code = "code",
             name = "name",
+            normalisedName = "name",
             countryCode = "cc",
             country = "country",
         )
@@ -284,8 +294,7 @@ class PlacesRepoTest : KoinTest {
             repo.getPlace("code")
         }
 
-        assertThat(result.isSuccess).isTrue
-        assertThat(result.getOrNull()).isNull()
+        assertThat(result.isSuccess).isFalse
         coVerify(exactly = 0) { placesDao.update(any()) }
         coVerify(exactly = 0) { placesDao.insert(any()) }
     }
@@ -303,5 +312,84 @@ class PlacesRepoTest : KoinTest {
         assertThat(result.isSuccess).isFalse
         coVerify(exactly = 0) { placesDao.update(any()) }
         coVerify(exactly = 0) { placesDao.insert(any()) }
+    }
+
+    @Test
+    fun getForecastSuccess() {
+        coEvery { meteoApi.forecast(any()) } returns ForecastNet(
+            place = PlaceNet(
+                code = "code",
+                name = "name",
+                countryCode = "cc",
+            ),
+            forecastType = "long-term",
+            forecastCreationTimeUtc = "2021-08-24 08:00:00",
+            forecastTimestamps = listOf(
+                ForecastNet.Timestamp(
+                    forecastTimeUtc = "2021-08-24 08:00:00",
+                    airTemperature = 1.1,
+                    windSpeed = 1,
+                    windGust = 2,
+                    windDirection = 100,
+                    cloudCover = 50,
+                    seaLevelPressure = 1000,
+                    relativeHumidity = 3,
+                    totalPrecipitation = 0.5,
+                    conditionCode = "clear"
+                )
+            )
+        )
+
+        val result = runBlocking {
+            repo.getForecast("code")
+        }
+
+        assertThat(result.isSuccess).isTrue
+        assertThat(result.getOrNull()?.type).isEqualTo(Forecast.Type.LongTerm)
+        assertThat(result.getOrNull()?.timestamps?.size).isEqualTo(1)
+    }
+
+    @Test
+    fun getForecastInvalid() {
+        coEvery { meteoApi.forecast(any()) } returns ForecastNet(
+            place = PlaceNet(
+                code = null,
+                name = "name",
+                countryCode = "cc",
+            ),
+            forecastType = "long-term",
+            forecastCreationTimeUtc = "2021-08-24 08:00:00",
+            forecastTimestamps = listOf(
+                ForecastNet.Timestamp(
+                    forecastTimeUtc = "2021-08-24 08:00:00",
+                    airTemperature = 1.1,
+                    windSpeed = 1,
+                    windGust = 2,
+                    windDirection = 100,
+                    cloudCover = 50,
+                    seaLevelPressure = 1000,
+                    relativeHumidity = 3,
+                    totalPrecipitation = 0.5,
+                    conditionCode = "clear"
+                )
+            )
+        )
+
+        val result = runBlocking {
+            repo.getForecast("code")
+        }
+
+        assertThat(result.isSuccess).isFalse
+    }
+
+    @Test
+    fun getForecastFailure() {
+        coEvery { meteoApi.forecast(any()) } throws RuntimeException()
+
+        val result = runBlocking {
+            repo.getForecast("code")
+        }
+
+        assertThat(result.isSuccess).isFalse
     }
 }

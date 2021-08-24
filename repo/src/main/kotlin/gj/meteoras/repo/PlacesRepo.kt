@@ -7,6 +7,7 @@ import gj.meteoras.ext.lang.runCatchingCancelable
 import gj.meteoras.ext.lang.then
 import gj.meteoras.ext.lang.timber
 import gj.meteoras.net.api.MeteoApi
+import gj.meteoras.repo.mappers.toDao
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import java.time.Duration

@@ -1,4 +1,4 @@
-package gj.meteoras.repo.places
+package gj.meteoras.repo
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -7,9 +7,6 @@ import gj.meteoras.data.Place
 import gj.meteoras.db.Database
 import gj.meteoras.db.dao.PlacesDao
 import gj.meteoras.net.apiModule
-import gj.meteoras.repo.PlacesRepo
-import gj.meteoras.repo.RepoConfig
-import gj.meteoras.repo.RepoPreferences
 import gj.meteoras.test.TimberRule
 import gj.meteoras.test.trustSsl
 import io.mockk.MockKAnnotations
@@ -125,6 +122,7 @@ class PlacesRepoIntegartionTest : KoinTest {
                 listOf(
                     Place(
                         name = "name",
+                        normalisedName = "name",
                         code = "vilnius",
                         countryCode = "cc"
                     )

@@ -1,11 +1,27 @@
-package gj.meteoras.repo.places
+package gj.meteoras.repo.mappers
 
+import gj.meteoras.ext.lang.normalise
 import gj.meteoras.net.data.PlaceNet
-import gj.meteoras.repo.toDao
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 
 class PlacesMapperTest {
+
+    @Before
+    fun before() {
+        mockkStatic(String::normalise)
+        every { any<String>().normalise() } returns "normalised"
+    }
+
+    @After
+    fun after() {
+        unmockkAll()
+    }
 
     @Test
     fun toDaoNullIfEmpty() {

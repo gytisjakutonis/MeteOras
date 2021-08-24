@@ -1,38 +1,13 @@
-package gj.meteoras.repo
+package gj.meteoras.repo.mappers
 
 import gj.meteoras.data.Forecast
-import gj.meteoras.data.Place
-import gj.meteoras.ext.lang.normalise
 import gj.meteoras.net.data.ForecastNet
-import gj.meteoras.net.data.PlaceNet
 import timber.log.Timber
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-
-fun List<PlaceNet>.toDao(): List<Place> = mapNotNull { it.toDao() }
-
-fun PlaceNet.toDao(): Place? = try {
-    Place(
-        code = code!!,
-        name = name!!,
-        normalisedName = name!!.normalise(),
-        administrativeDivision = administrativeDivision,
-        countryCode = countryCode!!,
-        coordinates = coordinates?.let {
-            Place.Coordinates(
-                latitude = it.latitude!!,
-                longitude = it.longitude!!
-            )
-        },
-        country = country
-    )
-} catch (error: NullPointerException) {
-    Timber.e("Invalid place: $this")
-    null
-}
 
 fun ForecastNet.Timestamp.toDao(): Forecast.Timestamp? = try {
     Forecast.Timestamp(
