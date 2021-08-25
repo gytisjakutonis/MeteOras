@@ -14,6 +14,15 @@ class UiPreferences(private val sharedPreferences: SharedPreferences) {
                 putStrings(favouritePlacesKey, value)
             }
         }
+
+    var disclaimerAccepted: Boolean
+        get() = sharedPreferences.getBoolean(disclaimerAcceptedKey, false)
+        set(value) {
+            sharedPreferences.edit {
+                putBoolean(disclaimerAcceptedKey, value)
+            }
+        }
 }
 
 private const val favouritePlacesKey = "favouritePlaces"
+private const val disclaimerAcceptedKey = "disclaimerAccepted"

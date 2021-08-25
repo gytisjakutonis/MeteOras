@@ -35,6 +35,15 @@ class PlacesViewModel(
     suspend fun resume() {
         if (busy) return
 
+        if (!preferences.disclaimerAccepted) {
+            PlacesViewAction.ShowMessage(
+                message = resources.getString(R.string.disclaimer),
+                action = resources.getString(R.string.action_accept)
+            ) {
+                accept()
+            }.emit()
+        }
+
         state.value.copy(favourites = preferences.favouritePlaces).emit()
 
         work {
@@ -60,6 +69,10 @@ class PlacesViewModel(
     suspend fun use(place: Place) {
         addFavourite(place)
         PlacesViewAction.OpenPlace(place = place).emit()
+    }
+
+    suspend fun accept() {
+        preferences.disclaimerAccepted = true
     }
 
     private suspend fun addFavourite(place: Place) {
