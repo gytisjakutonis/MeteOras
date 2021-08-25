@@ -33,15 +33,17 @@ class PlacesViewModel(
     override fun PlacesViewState.kopy(busy: Boolean) = copy(busy = busy)
 
     suspend fun resume() {
+        if (busy) return
+
         state.value.copy(favourites = preferences.favouritePlaces).emit()
 
         work {
             repo.syncPlaces()
-        }?.onSuccess { result ->
+        }.onSuccess { result ->
             if (result) {
                 filterByName(state.value.filter)
             }
-        }?.onFailure { error ->
+        }.onFailure { error ->
             PlacesViewAction.ShowMessage(
                 message = error.translate(),
                 action = resources.getString(R.string.action_retry)

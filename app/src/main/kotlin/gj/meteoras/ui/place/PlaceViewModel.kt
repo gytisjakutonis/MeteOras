@@ -15,11 +15,13 @@ class PlaceViewModel(
     override fun PlaceViewState.kopy(busy: Boolean) = copy(busy = busy)
 
     suspend fun resume(code: String) {
+        if (busy) return
+
         work {
             repo.getForecast(code)
-        }?.onSuccess { result ->
+        }.onSuccess { result ->
             state.value.copy(forecast = result).emit()
-        }?.onFailure { error ->
+        }.onFailure { error ->
             PlaceViewAction.ShowMessage(
                 message = error.translate(),
                 action = resources.getString(R.string.action_retry)

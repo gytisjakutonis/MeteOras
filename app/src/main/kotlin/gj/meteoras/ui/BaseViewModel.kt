@@ -6,8 +6,6 @@ import gj.meteoras.R
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -21,17 +19,14 @@ abstract class BaseViewModel<State : BaseViewState, Action>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-    private val stateMutex = Mutex()
+
+    internal val busy: Boolean get() = state.value.busy
 
     internal abstract fun State.kopy(busy: Boolean): State
 
-    internal suspend fun <T> work(block: suspend () -> Result<T>): Result<T>? {
-        stateMutex.withLock {
-            if (state.value.busy) return null
-            else busy()
-        }
-
+    internal suspend fun <T> work(block: suspend () -> Result<T>): Result<T> {
         return try {
+            busy()
             block()
         } finally {
             idle()
