@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1079867162372",
+    "project_id": "meteoras-ceb25",
+    "storage_bucket": "meteoras-ceb25.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079867162372:android:d9d4628e512f4a44d89a51",
+        "android_client_info": {
+          "package_name": "gj.meteoras"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1079867162372-7eobdgd4muadmp7k3rv6lvrvdp9eu0fe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_PjdQMY0cAFgw5nEParZwlwHYBaKm-Q8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1079867162372-7eobdgd4muadmp7k3rv6lvrvdp9eu0fe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

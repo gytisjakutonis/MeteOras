@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">meteORAS</string>
+    <string name="app_name" translatable="false">meteORAS</string>
 
     <string name="action_retry">Retry</string>
 
@@ -9,7 +9,7 @@
 
     <string name="places_filter_hint">Pick a place</string>
 
-    <string name="timestamp_ms">m/s</string>
+    <string name="timestamp_ms" translatable="false">m/s</string>
 
     <string name="disclaimer">meteORAS app provides weather forecast based on meteo.lt API service. The contents of this app are meant to be used for informational purposes only. We do not take responsibility for decisions taken by the user based solely on the information provided in this app.\n\nAlthough we attempt to provide as accurate forecasts as possible, yet we do not guarantee reliability of forecasts due to the fact, that we do not have control over meteo.lt API itself.\n\nUse of the app is at your own risk. The app is provided on an \'as is\' basis.</string>
 </resources>

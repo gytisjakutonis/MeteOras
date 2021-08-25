@@ -1,5 +1,8 @@
 package gj.meteoras.net.data
 
+import androidx.annotation.Keep
+
+@Keep
 data class PlaceNet(
     val code: String?,
     val name: String?,
@@ -8,6 +11,7 @@ data class PlaceNet(
     val country: String? = null,
     val coordinates: Coordinates? = null,
 ) {
+    @Keep
     data class Coordinates(
         val latitude : Double?,
         val longitude : Double?

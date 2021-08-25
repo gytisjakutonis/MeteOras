@@ -1,11 +1,15 @@
 package gj.meteoras.net.data
 
+import androidx.annotation.Keep
+
+@Keep
 data class ForecastNet(
     val place: PlaceNet?,
     val forecastType: String?,
     val forecastCreationTimeUtc: String?,
     val forecastTimestamps: List<Timestamp>?
 ) {
+    @Keep
     data class Timestamp(
         val forecastTimeUtc: String?,
         val airTemperature: Double?,
