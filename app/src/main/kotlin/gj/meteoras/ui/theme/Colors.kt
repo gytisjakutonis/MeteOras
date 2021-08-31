@@ -25,26 +25,26 @@ internal val lightColors = Colors(
 )
 
 internal val darkColors = Colors(
-    primary = Color(0xFF66bb6a),
+    primary = Color(0xFF1b5e20),
     primaryVariant = primaryBlack,
-    secondary = Color(0xFF2196f3),
+    secondary = Color(0xFF1565c0),
     secondaryVariant = secondaryBlack,
-    background = primaryBlack,
-    surface = primaryBlack,
-    error = Color(0xFFCF6679),
-    onPrimary = primaryBlack,
-    onSecondary = secondaryBlack,
-    onBackground = primaryWhite,
-    onSurface = primaryWhite,
-    onError = primaryBlack,
+    background = primaryWhite,
+    surface = primaryWhite,
+    error = Color(0xFFB00020),
+    onPrimary = primaryWhite,
+    onSecondary = primaryWhite,
+    onBackground = primaryBlack,
+    onSurface = primaryBlack,
+    onError = primaryWhite,
     false
 )
 
 val Colors.supplementary: Color
-    get() = if (isLight) Color.LightGray else Color.LightGray
+    get() = Color.LightGray
 
 val Colors.cold: Color
-    get() = if (isLight) Color(0xFF1565c0) else Color(0xFF2196f3)
+    get() = Color(0xFF1565c0)
 
 val Colors.hot: Color
-    get() = if (isLight) Color(0xFFB00020) else Color(0xFFCF6679)
+    get() = Color(0xFFB00020)
