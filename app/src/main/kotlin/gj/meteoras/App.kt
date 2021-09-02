@@ -27,6 +27,7 @@ class App : Application() {
             logger(TimberLogger())
 
             modules(
+                appModule,
                 netModule,
                 apiModule,
                 dbModule,

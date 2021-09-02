@@ -1,5 +1,6 @@
 package gj.meteoras.ui.places.compose
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
@@ -15,14 +16,17 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import gj.meteoras.Updater
 import gj.meteoras.ext.compose.collectAsAction
 import gj.meteoras.ui.places.PlacesViewModel
 import gj.meteoras.ui.theme.paddings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel
 import kotlin.time.ExperimentalTime
 
@@ -87,8 +91,15 @@ fun PlacesView(
         navController = navController
     )
 
+    val updater = get<Updater>()
+    val activity = LocalContext.current as Activity
+
     LaunchedEffect(true) {
         Firebase.analytics.logEvent("view_places", null)
         scope.launch { model.resume() }
+
+        scope.launch {
+            updater.check(activity)
+        }
     }
 }
