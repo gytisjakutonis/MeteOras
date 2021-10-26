@@ -15,7 +15,7 @@ abstract class BaseViewModel<State : BaseViewState, Action>(
 ) : ViewModel() {
 
     val state = MutableStateFlow(initialState)
-        val action = MutableSharedFlow<Action>(
+    val action = MutableSharedFlow<Action>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
