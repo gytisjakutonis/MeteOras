@@ -3,7 +3,6 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/primaryWhite</item>
     </style>
-
-    <color name="ic_launcher_background">#66bb6a</color>
 </resources>
