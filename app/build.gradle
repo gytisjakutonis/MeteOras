@@ -11,15 +11,11 @@ android {
     signingConfigs {
         debug {
             storeFile file('/Users/gjakutonis/keystore.jks')
-            storePassword 'keystore'
             keyAlias 'upload'
-            keyPassword 'keystore'
         }
         release {
             storeFile file('/Users/gjakutonis/keystore.jks')
-            storePassword 'keystore'
             keyAlias 'upload'
-            keyPassword 'keystore'
         }
     }
     dexOptions {
