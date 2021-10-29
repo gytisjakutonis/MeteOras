@@ -9,10 +9,6 @@ plugins {
 
 android {
     signingConfigs {
-        debug {
-            storeFile file('/Users/gjakutonis/keystore.jks')
-            keyAlias 'upload'
-        }
         release {
             storeFile file('/Users/gjakutonis/keystore.jks')
             keyAlias 'upload'
@@ -57,7 +53,6 @@ android {
             minifyEnabled false
             debuggable true
             zipAlignEnabled false
-            signingConfig signingConfigs.debug
         }
 
         release {
