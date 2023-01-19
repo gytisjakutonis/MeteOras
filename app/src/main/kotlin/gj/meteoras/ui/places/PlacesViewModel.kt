@@ -46,20 +46,20 @@ class PlacesViewModel(
 
         state.value.copy(favourites = preferences.favouritePlaces).emit()
 
-        work {
-            repo.syncPlaces()
-        }.onSuccess { result ->
-            if (result) {
-                filterByName(state.value.filter)
-            }
-        }.onFailure { error ->
-            PlacesViewAction.ShowMessage(
-                message = error.translate(),
-                action = resources.getString(R.string.action_retry)
-            ) {
-                resume()
-            }.emit()
-        }
+//        work {
+//            repo.syncPlaces()
+//        }.onSuccess { result ->
+//            if (result) {
+//                filterByName(state.value.filter)
+//            }
+//        }.onFailure { error ->
+//            PlacesViewAction.ShowMessage(
+//                message = error.translate(),
+//                action = resources.getString(R.string.action_retry)
+//            ) {
+//                resume()
+//            }.emit()
+//        }
     }
 
     suspend fun filter(name: String) {
@@ -84,11 +84,11 @@ class PlacesViewModel(
     }
 
     private suspend fun filterByName(name: String) {
-        repo.filterByName(name)
-            .onSuccess { value ->
-                state.value.copy(places = value, filter = name).emit()
-            }.onFailure { error ->
-                state.value.copy(filter = name).emit()
-            }
+//        repo.filterByName(name)
+//            .onSuccess { value ->
+//                state.value.copy(places = value, filter = name).emit()
+//            }.onFailure { error ->
+//                state.value.copy(filter = name).emit()
+//            }
     }
 }

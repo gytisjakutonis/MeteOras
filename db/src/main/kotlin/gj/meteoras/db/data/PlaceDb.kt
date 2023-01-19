@@ -21,6 +21,8 @@ data class PlaceDb(
     @Embedded
     val coordinates : Coordinates? = null
 ) {
+    val complete: Boolean get() = country != null && coordinates != null
+
     data class Coordinates(
         val latitude : Double,
         val longitude : Double

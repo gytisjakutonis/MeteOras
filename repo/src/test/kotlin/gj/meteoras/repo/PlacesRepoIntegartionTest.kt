@@ -3,7 +3,6 @@ package gj.meteoras.repo
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import gj.meteoras.data.Place
 import gj.meteoras.db.Database
 import gj.meteoras.db.dao.PlacesDao
 import gj.meteoras.net.apiModule
@@ -21,7 +20,6 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import okhttp3.OkHttpClient
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -111,62 +109,6 @@ class PlacesRepoIntegartionTest : KoinTest {
         val result = runBlocking {
             repo.syncPlaces()
         }
-
-        assertThat(result.isSuccess).isTrue
-    }
-
-    @Test
-    fun getPlace() {
-        runBlocking {
-            dao.insertAll(
-                listOf(
-                    Place(
-                        name = "name",
-                        normalisedName = "name",
-                        code = "vilnius",
-                        countryCode = "cc"
-                    )
-                )
-            )
-        }
-
-        val result = runBlocking {
-            repo.getPlace("vilnius")
-        }
-
-        val place = runBlocking {
-            dao.findByCode("vilnius")
-        }
-
-        assertThat(result.isSuccess).isTrue
-        assertThat(result.getOrNull()?.name).isEqualTo("Vilnius")
-        assertThat(result.getOrNull()?.country).isEqualTo("Lietuva")
-        assertThat(place?.name).isEqualTo("Vilnius")
-    }
-
-    @Test
-    fun getPlaceNew() {
-        val result = runBlocking {
-            repo.getPlace("vilnius")
-        }
-
-        val place = runBlocking {
-            dao.findByCode("vilnius")
-        }
-
-        assertThat(result.isSuccess).isTrue
-        assertThat(result.getOrNull()?.name).isEqualTo("Vilnius")
-        assertThat(result.getOrNull()?.country).isEqualTo("Lietuva")
-        assertThat(place?.name).isEqualTo("Vilnius")
-    }
-
-    @Test
-    fun getPlaceInvalid() {
-        val result = runBlocking {
-            repo.getPlace("nothing")
-        }
-
-        assertThat(result.isSuccess).isFalse
     }
 }
 

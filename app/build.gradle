@@ -70,12 +70,9 @@ android {
  }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':ext')
-    implementation project(path: ':net')
-    implementation project(path: ':db')
     implementation project(path: ':data')
-    implementation project(path: ':repo')
+    implementation project(path: ':domain')
 
     // ui
     implementation 'com.google.android.material:material:1.4.0'

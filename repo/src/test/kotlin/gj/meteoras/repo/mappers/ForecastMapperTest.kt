@@ -25,10 +25,11 @@ class ForecastMapperTest {
     }
 
     @Test
-    fun toDaoTimestamp() {
+    fun toDataTimestamp() {
         val net = ForecastNet.Timestamp(
             forecastTimeUtc = "2021-08-24 08:00:00",
             airTemperature = 1.1,
+            feelsLikeTemperature = 2.2,
             windSpeed = 1,
             windGust = 2,
             windDirection = 100,
@@ -39,16 +40,17 @@ class ForecastMapperTest {
             conditionCode = "clear"
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNotNull
     }
 
     @Test
-    fun toDaoTimestampNullIfNoWind() {
+    fun toDataTimestampNullIfNoWind() {
         val net = ForecastNet.Timestamp(
             forecastTimeUtc = "2021-08-24 08:00:00",
             airTemperature = 1.1,
+            feelsLikeTemperature = 2.2,
             windSpeed = null,
             windGust = 2,
             windDirection = 100,
@@ -59,16 +61,17 @@ class ForecastMapperTest {
             conditionCode = "clear"
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNull()
     }
 
     @Test
-    fun toDaoTimestampNullIfNoWindDirection() {
+    fun toDataTimestampNullIfNoWindDirection() {
         val net = ForecastNet.Timestamp(
             forecastTimeUtc = "2021-08-24 08:00:00",
             airTemperature = 1.1,
+            feelsLikeTemperature = 2.2,
             windSpeed = 1,
             windGust = 2,
             windDirection = null,
@@ -79,16 +82,17 @@ class ForecastMapperTest {
             conditionCode = "clear"
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNull()
     }
 
     @Test
-    fun toDaoTimestampNullIfNoTemperature() {
+    fun toDataTimestampNullIfNoTemperature() {
         val net = ForecastNet.Timestamp(
             forecastTimeUtc = "2021-08-24 08:00:00",
             airTemperature = null,
+            feelsLikeTemperature = 2.2,
             windSpeed = 1,
             windGust = 2,
             windDirection = 100,
@@ -99,56 +103,80 @@ class ForecastMapperTest {
             conditionCode = "clear"
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNull()
     }
 
     @Test
-    fun toDaoTimestampNullIfNoTime() {
-        val net = ForecastNet.Timestamp(
-            forecastTimeUtc = null,
-            airTemperature = 1.1,
-            windSpeed = 1,
-            windGust = 2,
-            windDirection = 100,
-            cloudCover = 50,
-            seaLevelPressure = 1000,
-            relativeHumidity = 3,
-            totalPrecipitation = 0.5,
-            conditionCode = "clear"
-        )
-
-        val dao = net.toDao()
-
-        assertThat(dao).isNull()
-    }
-
-    @Test
-    fun toDaoTimestampNullIfBadTime() {
-        val net = ForecastNet.Timestamp(
-            forecastTimeUtc = "abc",
-            airTemperature = 1.1,
-            windSpeed = 1,
-            windGust = 2,
-            windDirection = 100,
-            cloudCover = 50,
-            seaLevelPressure = 1000,
-            relativeHumidity = 3,
-            totalPrecipitation = 0.5,
-            conditionCode = "clear"
-        )
-
-        val dao = net.toDao()
-
-        assertThat(dao).isNull()
-    }
-
-    @Test
-    fun toDaoTimestampNullIfNoCondition() {
+    fun toDataTimestampNullIfNoFeelsTemperature() {
         val net = ForecastNet.Timestamp(
             forecastTimeUtc = "2021-08-24 08:00:00",
             airTemperature = 1.1,
+            feelsLikeTemperature = null,
+            windSpeed = 1,
+            windGust = 2,
+            windDirection = 100,
+            cloudCover = 50,
+            seaLevelPressure = 1000,
+            relativeHumidity = 3,
+            totalPrecipitation = 0.5,
+            conditionCode = "clear"
+        )
+
+        val dao = net.toData()
+
+        assertThat(dao).isNull()
+    }
+
+    @Test
+    fun toDataTimestampNullIfNoTime() {
+        val net = ForecastNet.Timestamp(
+            forecastTimeUtc = null,
+            airTemperature = 1.1,
+            feelsLikeTemperature = 2.2,
+            windSpeed = 1,
+            windGust = 2,
+            windDirection = 100,
+            cloudCover = 50,
+            seaLevelPressure = 1000,
+            relativeHumidity = 3,
+            totalPrecipitation = 0.5,
+            conditionCode = "clear"
+        )
+
+        val dao = net.toData()
+
+        assertThat(dao).isNull()
+    }
+
+    @Test
+    fun toDataTimestampNullIfBadTime() {
+        val net = ForecastNet.Timestamp(
+            forecastTimeUtc = "abc",
+            airTemperature = 1.1,
+            feelsLikeTemperature = 2.2,
+            windSpeed = 1,
+            windGust = 2,
+            windDirection = 100,
+            cloudCover = 50,
+            seaLevelPressure = 1000,
+            relativeHumidity = 3,
+            totalPrecipitation = 0.5,
+            conditionCode = "clear"
+        )
+
+        val dao = net.toData()
+
+        assertThat(dao).isNull()
+    }
+
+    @Test
+    fun toDataTimestampNullIfNoCondition() {
+        val net = ForecastNet.Timestamp(
+            forecastTimeUtc = "2021-08-24 08:00:00",
+            airTemperature = 1.1,
+            feelsLikeTemperature = 2.2,
             windSpeed = 1,
             windGust = 2,
             windDirection = 100,
@@ -159,16 +187,17 @@ class ForecastMapperTest {
             conditionCode = null
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNull()
     }
 
     @Test
-    fun toDaoTimestampNullIfBadCondition() {
+    fun toDataTimestampNullIfBadCondition() {
         val net = ForecastNet.Timestamp(
             forecastTimeUtc = "2021-08-24 08:00:00",
             airTemperature = 1.1,
+            feelsLikeTemperature = 2.2,
             windSpeed = 1,
             windGust = 2,
             windDirection = 100,
@@ -179,13 +208,13 @@ class ForecastMapperTest {
             conditionCode = "something"
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNull()
     }
 
     @Test
-    fun toDaoForecast() {
+    fun toDataForecast() {
         val net = ForecastNet(
             place = PlaceNet(
                 code = "code",
@@ -198,6 +227,7 @@ class ForecastMapperTest {
                 ForecastNet.Timestamp(
                     forecastTimeUtc = "2021-08-24 08:00:00",
                     airTemperature = 1.1,
+                    feelsLikeTemperature = 2.2,
                     windSpeed = 1,
                     windGust = 2,
                     windDirection = 100,
@@ -210,14 +240,14 @@ class ForecastMapperTest {
             )
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNotNull
         assertThat(dao?.timestamps?.size).isEqualTo(1)
     }
 
     @Test
-    fun toDaoForecastNollIfNoPlace() {
+    fun toDataForecastNollIfNoPlace() {
         val net = ForecastNet(
             place = PlaceNet(
                 code = null,
@@ -230,6 +260,7 @@ class ForecastMapperTest {
                 ForecastNet.Timestamp(
                     forecastTimeUtc = "2021-08-24 08:00:00",
                     airTemperature = 1.1,
+                    feelsLikeTemperature = 2.2,
                     windSpeed = 1,
                     windGust = 2,
                     windDirection = 100,
@@ -242,13 +273,13 @@ class ForecastMapperTest {
             )
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNull()
     }
 
     @Test
-    fun toDaoForecastNullIfNoType() {
+    fun toDataForecastNullIfNoType() {
         val net = ForecastNet(
             place = PlaceNet(
                 code = "code",
@@ -261,6 +292,7 @@ class ForecastMapperTest {
                 ForecastNet.Timestamp(
                     forecastTimeUtc = "2021-08-24 08:00:00",
                     airTemperature = 1.1,
+                    feelsLikeTemperature = 2.2,
                     windSpeed = 1,
                     windGust = 2,
                     windDirection = 100,
@@ -273,13 +305,13 @@ class ForecastMapperTest {
             )
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNull()
     }
 
     @Test
-    fun toDaoForecastNullIfBadType() {
+    fun toDataForecastNullIfBadType() {
         val net = ForecastNet(
             place = PlaceNet(
                 code = "code",
@@ -292,6 +324,7 @@ class ForecastMapperTest {
                 ForecastNet.Timestamp(
                     forecastTimeUtc = "2021-08-24 08:00:00",
                     airTemperature = 1.1,
+                    feelsLikeTemperature = 2.2,
                     windSpeed = 1,
                     windGust = 2,
                     windDirection = 100,
@@ -304,13 +337,13 @@ class ForecastMapperTest {
             )
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNull()
     }
 
     @Test
-    fun toDaoForecastNullIfNoTime() {
+    fun toDataForecastNullIfNoTime() {
         val net = ForecastNet(
             place = PlaceNet(
                 code = "code",
@@ -323,6 +356,7 @@ class ForecastMapperTest {
                 ForecastNet.Timestamp(
                     forecastTimeUtc = "2021-08-24 08:00:00",
                     airTemperature = 1.1,
+                    feelsLikeTemperature = 2.2,
                     windSpeed = 1,
                     windGust = 2,
                     windDirection = 100,
@@ -335,13 +369,13 @@ class ForecastMapperTest {
             )
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNull()
     }
 
     @Test
-    fun toDaoForecastNullIfBadTime() {
+    fun toDataForecastNullIfBadTime() {
         val net = ForecastNet(
             place = PlaceNet(
                 code = "code",
@@ -354,6 +388,7 @@ class ForecastMapperTest {
                 ForecastNet.Timestamp(
                     forecastTimeUtc = "2021-08-24 08:00:00",
                     airTemperature = 1.1,
+                    feelsLikeTemperature = 2.2,
                     windSpeed = 1,
                     windGust = 2,
                     windDirection = 100,
@@ -366,13 +401,13 @@ class ForecastMapperTest {
             )
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNull()
     }
 
     @Test
-    fun toDaoForecastNullIfNoTimestamps() {
+    fun toDataForecastNullIfNoTimestamps() {
         val net = ForecastNet(
             place = PlaceNet(
                 code = "code",
@@ -384,13 +419,13 @@ class ForecastMapperTest {
             forecastTimestamps = null
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNull()
     }
 
     @Test
-    fun toDaoForecastEmptyTimestamps() {
+    fun toDataForecastEmptyTimestamps() {
         val net = ForecastNet(
             place = PlaceNet(
                 code = "code",
@@ -402,14 +437,14 @@ class ForecastMapperTest {
             forecastTimestamps = emptyList()
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNotNull
         assertThat(dao?.timestamps?.size).isEqualTo(0)
     }
 
     @Test
-    fun toDaoForecastSkipBadTimestamp() {
+    fun toDataForecastSkipBadTimestamp() {
         val net = ForecastNet(
             place = PlaceNet(
                 code = "code",
@@ -422,6 +457,7 @@ class ForecastMapperTest {
                 ForecastNet.Timestamp(
                     forecastTimeUtc = "2021-08-24 08:00:00",
                     airTemperature = 1.1,
+                    feelsLikeTemperature = 2.2,
                     windSpeed = 1,
                     windGust = 2,
                     windDirection = 100,
@@ -434,6 +470,7 @@ class ForecastMapperTest {
                 ForecastNet.Timestamp(
                     forecastTimeUtc = "2021-08-24 08:00:00",
                     airTemperature = 1.1,
+                    feelsLikeTemperature = 2.2,
                     windSpeed = 1,
                     windGust = 2,
                     windDirection = 100,
@@ -446,7 +483,7 @@ class ForecastMapperTest {
             )
         )
 
-        val dao = net.toDao()
+        val dao = net.toData()
 
         assertThat(dao).isNotNull
         assertThat(dao?.timestamps?.size).isEqualTo(1)

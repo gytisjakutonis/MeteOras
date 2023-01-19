@@ -4,9 +4,9 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import gj.meteoras.db.converters.TimeTypeConverters
 import gj.meteoras.db.dao.PlacesDao
 import gj.meteoras.db.data.PlaceDb
-import gj.meteoras.db.type.TimeTypeConverters
 
 @Database(
     version = 2,

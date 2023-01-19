@@ -6,18 +6,12 @@ plugins {
 
 android {
     buildTypes {
-        debug {
-            buildConfigField 'String', 'METEO_URL', "\"https://api.meteo.lt/v1/\""
-        }
-
-        release {
-            buildConfigField 'String', 'METEO_URL', "\"https://api.meteo.lt/v1/\""
-        }
+        debug {}
+        release {}
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':ext')
     implementation project(path: ':data')
     implementation project(path: ':net')
@@ -25,5 +19,5 @@ dependencies {
 
     // test
     testImplementation project(path: ':test')
-    testImplementation "androidx.room:room-runtime:$room_version"
+    testImplementation "androidx.room:room-runtime:2.5.0"
 }

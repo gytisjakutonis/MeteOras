@@ -11,7 +11,7 @@ data class Forecast(
     data class Timestamp(
         val time: Instant,
         val airTemperature: Double,
-        val feelsTemperature: Double,
+        val feelsLikeTemperature: Double,
         val windSpeed: Int,
         val windGust: Int,
         val windDirection: Int,

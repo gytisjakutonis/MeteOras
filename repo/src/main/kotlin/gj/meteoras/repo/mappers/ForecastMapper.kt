@@ -9,10 +9,11 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-fun ForecastNet.Timestamp.toDao(): Forecast.Timestamp? = try {
+fun ForecastNet.Timestamp.toData(): Forecast.Timestamp? = try {
     Forecast.Timestamp(
         time = forecastTimeUtc?.toInstant()!!,
         airTemperature = airTemperature!!,
+        feelsLikeTemperature = feelsLikeTemperature!!,
         windSpeed = windSpeed!!,
         windGust = windGust!!,
         windDirection = windDirection!!,
@@ -20,19 +21,20 @@ fun ForecastNet.Timestamp.toDao(): Forecast.Timestamp? = try {
         seaLevelPressure = seaLevelPressure!!,
         relativeHumidity = relativeHumidity!!,
         totalPrecipitation = totalPrecipitation!!,
-        condition = Forecast.Timestamp.Condition.values().firstOrNull { it.value == conditionCode }!!
+        condition = Forecast.Timestamp.Condition.values().firstOrNull { it.value == conditionCode }
+            ?: Forecast.Timestamp.Condition.Null
     )
 } catch (error: NullPointerException) {
     Timber.e("Invalid timestamp: $this")
     null
 }
 
-fun ForecastNet.toDao(): Forecast? = try {
+fun ForecastNet.toData(): Forecast? = try {
     Forecast(
-        place = place?.toDao()!!,
+        place = place?.toData()!!,
         type = Forecast.Type.values().firstOrNull { it.value == forecastType }!!,
         creationTime = forecastCreationTimeUtc?.toInstant()!!,
-        timestamps = forecastTimestamps?.mapNotNull { it.toDao() }!!
+        timestamps = forecastTimestamps?.mapNotNull { it.toData() }!!
     )
 } catch (error: NullPointerException) {
     Timber.e("Invalid forecast: $this")

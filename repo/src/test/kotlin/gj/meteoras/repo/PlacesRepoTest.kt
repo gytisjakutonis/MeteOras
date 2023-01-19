@@ -1,7 +1,6 @@
 package gj.meteoras.repo
 
 import gj.meteoras.data.Forecast
-import gj.meteoras.data.Place
 import gj.meteoras.db.dao.PlacesDao
 import gj.meteoras.ext.lang.normalise
 import gj.meteoras.net.api.MeteoApi
@@ -91,20 +90,8 @@ class PlacesRepoTest : KoinTest {
             repo.filterByName("name",)
         }
 
-        assertThat(result.isSuccess).isTrue
         coVerify(exactly = 0) { meteoApi.places() }
         coVerify { placesDao.findByName("name%") }
-    }
-
-    @Test
-    fun findPlacesError() {
-        coEvery { placesDao.findByName(any()) } throws RuntimeException()
-
-        val result = runBlocking {
-            repo.filterByName("name",)
-        }
-
-        assertThat(result.isFailure).isTrue
     }
 
     @Test
@@ -118,8 +105,6 @@ class PlacesRepoTest : KoinTest {
             repo.syncPlaces()
         }
 
-        assertThat(result.isSuccess).isTrue
-        assertThat(result.getOrNull()).isTrue
         coVerify { meteoApi.places() }
         coVerify { placesDao.setAll(any()) }
         verify { repoPreferences setProperty "placesTimestamp" value more(timestamp) }
@@ -136,8 +121,6 @@ class PlacesRepoTest : KoinTest {
             repo.syncPlaces()
         }
 
-        assertThat(result.isSuccess).isTrue
-        assertThat(result.getOrNull()).isTrue
         coVerify { meteoApi.places() }
         coVerify { placesDao.setAll(any()) }
         verify { repoPreferences setProperty "placesTimestamp" value more(timestamp) }
@@ -155,163 +138,9 @@ class PlacesRepoTest : KoinTest {
             repo.syncPlaces()
         }
 
-        assertThat(result.isSuccess).isTrue
-        assertThat(result.getOrNull()).isFalse
         coVerify(exactly = 0) { meteoApi.places() }
         coVerify(exactly = 0) { placesDao.setAll(any()) }
         verify(exactly = 0) { repoPreferences setProperty "placesTimestamp" value more(timestamp) }
-    }
-
-    @Test
-    fun syncPlacesError() {
-        val timestamp = Instant.ofEpochSecond(0L)
-
-        coEvery { meteoApi.places() } throws RuntimeException()
-        coEvery { placesDao.findByName(any()) } returns emptyList()
-        every { repoPreferences.placesTimestamp } returns timestamp
-
-        val result = runBlocking {
-            repo.syncPlaces()
-        }
-
-        assertThat(result.isFailure).isTrue
-        coVerify(exactly = 1) { meteoApi.places() }
-    }
-
-    @Test
-    fun getPlaceComplete() {
-        coEvery { meteoApi.place(any()) } returns PlaceNet(
-            code = "code",
-            name = "name",
-            countryCode = "cc",
-            country = "other",
-            coordinates = PlaceNet.Coordinates(
-                latitude = 3.3,
-                longitude = 4.4
-            )
-        )
-
-        coEvery { placesDao.findByCode(any()) } returns Place(
-            id = 123,
-            code = "code",
-            name = "name",
-            normalisedName = "name",
-            countryCode = "cc",
-            country = "country",
-            coordinates = Place.Coordinates(
-                latitude = 1.1,
-                longitude = 2.2
-            )
-        )
-
-        val result = runBlocking {
-            repo.getPlace("code")
-        }
-
-        assertThat(result.isSuccess).isTrue
-        assertThat(result.getOrNull()?.country).isEqualTo("country")
-        coVerify(exactly = 0) { meteoApi.place(any()) }
-        coVerify(exactly = 0) { placesDao.update(any()) }
-        coVerify(exactly = 0) { placesDao.insert(any()) }
-    }
-
-    @Test
-    fun getPlaceIncomplete() {
-        coEvery { meteoApi.place(any()) } returns PlaceNet(
-            code = "code",
-            name = "name",
-            countryCode = "cc",
-            country = "other",
-            coordinates = PlaceNet.Coordinates(
-                latitude = 3.3,
-                longitude = 4.4
-            )
-        )
-
-        coEvery { placesDao.findByCode(any()) } returns Place(
-            id = 123,
-            code = "code",
-            name = "name",
-            normalisedName = "name",
-            countryCode = "cc",
-            country = "country",
-        )
-
-        val result = runBlocking {
-            repo.getPlace("code")
-        }
-
-        assertThat(result.isSuccess).isTrue
-        assertThat(result.getOrNull()?.country).isEqualTo("other")
-        coVerify { meteoApi.place("code") }
-        coVerify { placesDao.update(withArg { assertThat(it.id).isEqualTo(123) }) }
-        coVerify(exactly = 0) { placesDao.insert(any()) }
-    }
-
-    @Test
-    fun getPlaceMissing() {
-        coEvery { meteoApi.place(any()) } returns PlaceNet(
-            code = "code",
-            name = "name",
-            countryCode = "cc",
-            country = "other",
-            coordinates = PlaceNet.Coordinates(
-                latitude = 3.3,
-                longitude = 4.4
-            )
-        )
-
-        coEvery { placesDao.findByCode(any()) } returns null
-        coEvery { placesDao.insert(any()) } returns 123
-
-        val result = runBlocking {
-            repo.getPlace("code")
-        }
-
-        assertThat(result.isSuccess).isTrue
-        assertThat(result.getOrNull()?.country).isEqualTo("other")
-        coVerify { meteoApi.place("code") }
-        coVerify(exactly = 0) { placesDao.update(any()) }
-        coVerify { placesDao.insert(withArg { assertThat(it.code).isEqualTo("code") }) }
-    }
-
-    @Test
-    fun getPlaceInvalid() {
-        coEvery { meteoApi.place(any()) } returns PlaceNet(
-            code = null,
-            name = "name",
-            countryCode = "cc",
-            country = "other",
-            coordinates = PlaceNet.Coordinates(
-                latitude = 3.3,
-                longitude = 4.4
-            )
-        )
-
-        coEvery { placesDao.findByCode(any()) } returns null
-
-        val result = runBlocking {
-            repo.getPlace("code")
-        }
-
-        assertThat(result.isSuccess).isFalse
-        coVerify(exactly = 0) { placesDao.update(any()) }
-        coVerify(exactly = 0) { placesDao.insert(any()) }
-    }
-
-    @Test
-    fun getPlaceError() {
-        coEvery { meteoApi.place(any()) } throws RuntimeException()
-
-        coEvery { placesDao.findByCode(any()) } returns null
-
-        val result = runBlocking {
-            repo.getPlace("code")
-        }
-
-        assertThat(result.isSuccess).isFalse
-        coVerify(exactly = 0) { placesDao.update(any()) }
-        coVerify(exactly = 0) { placesDao.insert(any()) }
     }
 
     @Test
@@ -328,6 +157,7 @@ class PlacesRepoTest : KoinTest {
                 ForecastNet.Timestamp(
                     forecastTimeUtc = "2021-08-24 08:00:00",
                     airTemperature = 1.1,
+                    feelsLikeTemperature = 2.2,
                     windSpeed = 1,
                     windGust = 2,
                     windDirection = 100,
@@ -344,9 +174,9 @@ class PlacesRepoTest : KoinTest {
             repo.getForecast("code")
         }
 
-        assertThat(result.isSuccess).isTrue
-        assertThat(result.getOrNull()?.type).isEqualTo(Forecast.Type.LongTerm)
-        assertThat(result.getOrNull()?.timestamps?.size).isEqualTo(1)
+        assertThat(result).isNotNull
+        assertThat(result?.type).isEqualTo(Forecast.Type.LongTerm)
+        assertThat(result?.timestamps?.size).isEqualTo(1)
     }
 
     @Test
@@ -363,6 +193,7 @@ class PlacesRepoTest : KoinTest {
                 ForecastNet.Timestamp(
                     forecastTimeUtc = "2021-08-24 08:00:00",
                     airTemperature = 1.1,
+                    feelsLikeTemperature = 2.2,
                     windSpeed = 1,
                     windGust = 2,
                     windDirection = 100,
@@ -379,17 +210,6 @@ class PlacesRepoTest : KoinTest {
             repo.getForecast("code")
         }
 
-        assertThat(result.isSuccess).isFalse
-    }
-
-    @Test
-    fun getForecastFailure() {
-        coEvery { meteoApi.forecast(any()) } throws RuntimeException()
-
-        val result = runBlocking {
-            repo.getForecast("code")
-        }
-
-        assertThat(result.isSuccess).isFalse
+        assertThat(result).isNotNull
     }
 }

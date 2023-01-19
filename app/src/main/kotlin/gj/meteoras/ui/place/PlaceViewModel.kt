@@ -1,7 +1,6 @@
 package gj.meteoras.ui.place
 
 import android.content.res.Resources
-import gj.meteoras.R
 import gj.meteoras.repo.PlacesRepo
 import gj.meteoras.ui.BaseViewModel
 import kotlin.time.ExperimentalTime
@@ -17,17 +16,17 @@ class PlaceViewModel(
     suspend fun resume(code: String) {
         if (busy) return
 
-        work {
-            repo.getForecast(code)
-        }.onSuccess { result ->
-            state.value.copy(forecast = result).emit()
-        }.onFailure { error ->
-            PlaceViewAction.ShowMessage(
-                message = error.translate(),
-                action = resources.getString(R.string.action_retry)
-            ) {
-                resume(code)
-            }.emit()
-        }
+//        work {
+//            repo.getForecast(code)
+//        }.onSuccess { result ->
+//            state.value.copy(forecast = result).emit()
+//        }.onFailure { error ->
+//            PlaceViewAction.ShowMessage(
+//                message = error.translate(),
+//                action = resources.getString(R.string.action_retry)
+//            ) {
+//                resume(code)
+//            }.emit()
+//        }
     }
 }

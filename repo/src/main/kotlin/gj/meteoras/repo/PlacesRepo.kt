@@ -3,11 +3,10 @@ package gj.meteoras.repo
 import gj.meteoras.data.Forecast
 import gj.meteoras.data.Place
 import gj.meteoras.db.dao.PlacesDao
-import gj.meteoras.ext.lang.runCatchingCancelable
 import gj.meteoras.ext.lang.then
-import gj.meteoras.ext.lang.timber
 import gj.meteoras.net.api.MeteoApi
-import gj.meteoras.repo.mappers.toDao
+import gj.meteoras.repo.mappers.toData
+import gj.meteoras.repo.mappers.toDb
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import java.time.Duration
@@ -23,44 +22,17 @@ class PlacesRepo(
     private val api: MeteoApi
 ) {
 
-    suspend fun filterByName(name: String): Result<List<Place>> = runCatchingCancelable {
-        dao.findByName("$name%")
-    }.apply {
-        exceptionOrNull()?.timber()
-    }
+    suspend fun filterByName(name: String): List<Place> =
+        dao.findByName("$name%").map { it.toData() }
 
-    suspend fun syncPlaces(): Result<Boolean> = runCatchingCancelable {
+    suspend fun syncPlaces() {
         checkPlacesTimeout().then {
             loadPlaces()
         }
-    }.apply {
-        exceptionOrNull()?.timber()
     }
 
-    suspend fun getPlace(code: String): Result<Place> = runCatchingCancelable {
-        val old = dao.findByCode(code)
-
-        when {
-            old == null -> api.place(code).toDao()?.let { new ->
-                Timber.d("Loaded $code place")
-                new.copy(id = dao.insert(new).toInt())
-            }
-            !old.complete -> api.place(code).toDao()?.let { new ->
-                Timber.d("Loaded $code place")
-                new.copy(id = old.id).also { dao.update(it) }
-            }
-            else -> old
-        }!!
-    }.apply {
-        exceptionOrNull()?.timber()
-    }
-
-    suspend fun getForecast(code: String): Result<Forecast> = runCatchingCancelable {
-        Timber.d("Loaded $code forecast")
-        api.forecast(code).toDao()!!
-    }.apply {
-        exceptionOrNull()?.timber()
-    }
+    suspend fun getForecast(code: String): Forecast? =
+        api.forecast(code).toData()
 
     private suspend fun checkPlacesTimeout(): Boolean {
         val now = Instant.now()
@@ -76,7 +48,7 @@ class PlacesRepo(
             api.places()
         } ?: throw TimeoutException()
 
-        val placesDao = placesNet.toDao()
+        val placesDao = placesNet.mapNotNull { it.toDb() }
         dao.setAll(placesDao)
         Timber.d("Loaded ${placesDao.size} places")
 

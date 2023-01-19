@@ -24,7 +24,7 @@ class PlacesMapperTest {
     }
 
     @Test
-    fun toDaoNullIfEmpty() {
+    fun toDataNullIfEmpty() {
         val net = PlaceNet(
             code = null,
             name = null,
@@ -34,13 +34,15 @@ class PlacesMapperTest {
             country = null
         )
 
-        val dao = net.toDao()
+        val data = net.toData()
+        assertThat(data).isNull()
 
-        assertThat(dao).isNull()
+        val db = net.toDb()
+        assertThat(db).isNull()
     }
 
     @Test
-    fun toDaoNullIfNullName() {
+    fun toDataNullIfNullName() {
         val net = PlaceNet(
             code = "code",
             name = null,
@@ -53,13 +55,15 @@ class PlacesMapperTest {
             country = "Country"
         )
 
-        val dao = net.toDao()
+        val data = net.toData()
+        assertThat(data).isNull()
 
-        assertThat(dao).isNull()
+        val db = net.toDb()
+        assertThat(db).isNull()
     }
 
     @Test
-    fun toDaoNullIfNullCode() {
+    fun toDataNullIfNullCode() {
         val net = PlaceNet(
             code = null,
             name = "name",
@@ -72,13 +76,15 @@ class PlacesMapperTest {
             country = "Country"
         )
 
-        val dao = net.toDao()
+        val data = net.toData()
+        assertThat(data).isNull()
 
-        assertThat(dao).isNull()
+        val db = net.toDb()
+        assertThat(db).isNull()
     }
 
     @Test
-    fun toDaoNullIfNullCountryCode() {
+    fun toDataNullIfNullCountryCode() {
         val net = PlaceNet(
             code = "code",
             name = "name",
@@ -91,13 +97,15 @@ class PlacesMapperTest {
             country = "Country"
         )
 
-        val dao = net.toDao()
+        val data = net.toData()
+        assertThat(data).isNull()
 
-        assertThat(dao).isNull()
+        val db = net.toDb()
+        assertThat(db).isNull()
     }
 
     @Test
-    fun toDaoNullIfNullCountry() {
+    fun toDataNullIfNullCountry() {
         val net = PlaceNet(
             code = "code",
             name = "name",
@@ -110,13 +118,15 @@ class PlacesMapperTest {
             country = null
         )
 
-        val dao = net.toDao()
+        val data = net.toData()
+        assertThat(data).isNotNull
 
-        assertThat(dao).isNotNull
+        val db = net.toDb()
+        assertThat(db).isNotNull
     }
 
     @Test
-    fun toDaoIfNullDivision() {
+    fun toDataIfNullDivision() {
         val net = PlaceNet(
             code = "code",
             name = "name",
@@ -129,13 +139,15 @@ class PlacesMapperTest {
             country = "Country"
         )
 
-        val dao = net.toDao()
+        val data = net.toData()
+        assertThat(data).isNotNull
 
-        assertThat(dao).isNotNull
+        val db = net.toDb()
+        assertThat(db).isNotNull
     }
 
     @Test
-    fun toDaoIfNullCoordinates() {
+    fun toDataIfNullCoordinates() {
         val net = PlaceNet(
             code = "code",
             name = "name",
@@ -145,13 +157,15 @@ class PlacesMapperTest {
             country = "Country"
         )
 
-        val dao = net.toDao()
+        val data = net.toData()
+        assertThat(data).isNotNull
 
-        assertThat(dao).isNotNull
+        val db = net.toDb()
+        assertThat(db).isNotNull
     }
 
     @Test
-    fun toDaoNullIfNullLatitude() {
+    fun toDataNullIfNullLatitude() {
         val net = PlaceNet(
             code = "code",
             name = "name",
@@ -164,13 +178,15 @@ class PlacesMapperTest {
             country = "Country"
         )
 
-        val dao = net.toDao()
+        val data = net.toData()
+        assertThat(data).isNull()
 
-        assertThat(dao).isNull()
+        val db = net.toDb()
+        assertThat(db).isNull()
     }
 
     @Test
-    fun toDaoNullIfNullLongitude() {
+    fun toDataNullIfNullLongitude() {
         val net = PlaceNet(
             code = "code",
             name = "name",
@@ -183,13 +199,15 @@ class PlacesMapperTest {
             country = "Country"
         )
 
-        val dao = net.toDao()
+        val data = net.toData()
+        assertThat(data).isNull()
 
-        assertThat(dao).isNull()
+        val db = net.toDb()
+        assertThat(db).isNull()
     }
 
     @Test
-    fun toDaoValues() {
+    fun toDataValues() {
         val net = PlaceNet(
             code = "code",
             name = "name",
@@ -202,15 +220,24 @@ class PlacesMapperTest {
             country = "Country"
         )
 
-        val dao = net.toDao()
+        val data = net.toData()
 
-        assertThat(dao?.code).isEqualTo("code")
-        assertThat(dao?.name).isEqualTo("name")
-        assertThat(dao?.administrativeDivision).isEqualTo("division")
-        assertThat(dao?.countryCode).isEqualTo("cc")
-        assertThat(dao?.country).isEqualTo("Country")
-        assertThat(dao?.coordinates?.latitude).isEqualTo(12.34)
-        assertThat(dao?.coordinates?.longitude).isEqualTo(56.78)
+        assertThat(data?.code).isEqualTo("code")
+        assertThat(data?.name).isEqualTo("name")
+        assertThat(data?.administrativeDivision).isEqualTo("division")
+        assertThat(data?.countryCode).isEqualTo("cc")
+        assertThat(data?.country).isEqualTo("Country")
+        assertThat(data?.coordinates?.latitude).isEqualTo(12.34)
+        assertThat(data?.coordinates?.longitude).isEqualTo(56.78)
+
+        val db = net.toDb()
+
+        assertThat(db?.code).isEqualTo("code")
+        assertThat(db?.name).isEqualTo("name")
+        assertThat(db?.administrativeDivision).isEqualTo("division")
+        assertThat(db?.countryCode).isEqualTo("cc")
+        assertThat(db?.country).isEqualTo("Country")
+        assertThat(db?.coordinates?.latitude).isEqualTo(12.34)
+        assertThat(db?.coordinates?.longitude).isEqualTo(56.78)
     }
-
 }
