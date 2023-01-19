@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import gj.meteoras.data.Place
+import gj.meteoras.db.data.PlaceDb
 
 @Dao
 interface PlacesDao {
@@ -16,30 +16,30 @@ interface PlacesDao {
     suspend fun countAll(): Long
 
     @Query("SELECT * FROM place WHERE lower(normalisedName) LIKE lower(:name)")
-    suspend fun findByName(name: String): List<Place>
+    suspend fun findByName(name: String): List<PlaceDb>
 
     @Query("SELECT * FROM place WHERE code=:code")
-    suspend fun findByCode(code: String): Place?
+    suspend fun findByCode(code: String): PlaceDb?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(places: List<Place>)
+    suspend fun insertAll(places: List<PlaceDb>)
 
     @Query("DELETE FROM place")
     suspend fun deleteAll()
 
     @Transaction
-    suspend fun setAll(places: List<Place>) {
+    suspend fun setAll(places: List<PlaceDb>) {
         deleteAll()
         insertAll(places)
     }
 
     @Insert
-    suspend fun insert(place: Place): Long
+    suspend fun insert(place: PlaceDb): Long
 
     @Update
-    suspend fun update(place: Place)
+    suspend fun update(place: PlaceDb)
 
     @Delete
-    suspend fun delete(place: Place)
+    suspend fun delete(place: PlaceDb)
 
 }

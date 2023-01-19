@@ -1,4 +1,4 @@
-package gj.meteoras.ext.room
+package gj.meteoras.db.type
 
 import androidx.room.TypeConverter
 import java.time.Instant

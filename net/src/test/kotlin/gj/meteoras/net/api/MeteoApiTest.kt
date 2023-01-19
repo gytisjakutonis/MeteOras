@@ -2,7 +2,6 @@ package gj.meteoras.net.api
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import gj.meteoras.net.NetConfig
-import gj.meteoras.net.apiModule
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.unmockkAll
@@ -26,6 +25,8 @@ import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.KoinTestRule
 import org.koin.test.inject
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @ExperimentalCoroutinesApi
 class MeteoApiTest : KoinTest {
@@ -44,8 +45,19 @@ class MeteoApiTest : KoinTest {
         modules(
             module {
                 single { OkHttpClient.Builder().build() }
-            },
-            apiModule
+
+                single {
+                    Retrofit.Builder()
+                        .baseUrl(NetConfig.meteoUrl)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .client(get())
+                        .build()
+                }
+
+                single {
+                    get<Retrofit>().create(MeteoApi::class.java)
+                }
+            }
         )
     }
 
@@ -166,6 +178,7 @@ class MeteoApiTest : KoinTest {
                             {
                                 "forecastTimeUtc":"2021-08-24 08:00:00",
                                 "airTemperature":16,
+                                "feelsLikeTemperature":15,
                                 "windSpeed":4,
                                 "windGust":8,
                                 "windDirection":10,

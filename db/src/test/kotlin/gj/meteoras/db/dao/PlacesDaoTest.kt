@@ -3,8 +3,8 @@ package gj.meteoras.db.dao
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import gj.meteoras.data.Place
 import gj.meteoras.db.Database
+import gj.meteoras.db.data.PlaceDb
 import io.mockk.unmockkAll
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,7 +29,7 @@ import kotlin.test.fail
 @ExperimentalCoroutinesApi
 @Config(sdk = [28])
 @RunWith(AndroidJUnit4::class)
-class PlacesDaoTest : KoinTest{
+class PlacesDaoTest : KoinTest {
 
     // https://medium.com/@eyalg/testing-androidx-room-kotlin-coroutines-2d1faa3e674f
     // Room DAO transaction functions override threading, so does not work with runBlockingTest
@@ -79,26 +79,26 @@ class PlacesDaoTest : KoinTest{
     @Test
     fun insertAll() {
         val places = listOf(
-            Place(
+            PlaceDb(
                 code = "code1",
                 name = "name1",
                 countryCode = "countryCode1",
                 normalisedName = "name1"
             ),
-            Place(
+            PlaceDb(
                 code = "code2",
                 name = "name1",
                 normalisedName = "name1",
                 countryCode = "countryCode1",
                 administrativeDivision = "administrativeDivision2"
             ),
-            Place(
+            PlaceDb(
                 code = "code3",
                 name = "name3",
                 normalisedName = "name3",
                 countryCode = "countryCode3",
                 administrativeDivision = "administrativeDivision2",
-                coordinates = Place.Coordinates(
+                coordinates = PlaceDb.Coordinates(
                     latitude = 1.1,
                     longitude = 2.2
                 )
@@ -119,13 +119,13 @@ class PlacesDaoTest : KoinTest{
     @Test
     fun uniqueCode() {
         val places = listOf(
-            Place(
+            PlaceDb(
                 code = "code1",
                 name = "name1",
                 normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
-            Place(
+            PlaceDb(
                 code = "code1",
                 name = "name1",
                 normalisedName = "name1",
@@ -147,19 +147,19 @@ class PlacesDaoTest : KoinTest{
     @Test
     fun deleteAll() {
         val places = listOf(
-            Place(
+            PlaceDb(
                 code = "code1",
                 name = "name1",
                 normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
-            Place(
+            PlaceDb(
                 code = "code2",
                 name = "name1",
                 normalisedName = "name1",
                 countryCode = "countryCode1",
             ),
-            Place(
+            PlaceDb(
                 code = "code3",
                 name = "name3",
                 normalisedName = "name3",
@@ -191,19 +191,19 @@ class PlacesDaoTest : KoinTest{
     @Test
     fun setAll() {
         val placesBefore = listOf(
-            Place(
+            PlaceDb(
                 code = "code1",
                 name = "name1",
                 normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
-            Place(
+            PlaceDb(
                 code = "code2",
                 name = "name1",
                 normalisedName = "name1",
                 countryCode = "countryCode1",
             ),
-            Place(
+            PlaceDb(
                 code = "code3",
                 name = "name3",
                 normalisedName = "name3",
@@ -212,13 +212,13 @@ class PlacesDaoTest : KoinTest{
         )
 
         val placesAfter = listOf(
-            Place(
+            PlaceDb(
                 code = "code4",
                 name = "name1",
                 normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
-            Place(
+            PlaceDb(
                 code = "code5",
                 name = "name1",
                 normalisedName = "name1",
@@ -250,31 +250,31 @@ class PlacesDaoTest : KoinTest{
     @Test
     fun findByName() {
         val places = listOf(
-            Place(
+            PlaceDb(
                 code = "code1",
                 name = "abc",
                 normalisedName = "abc",
                 countryCode = "countryCode1"
             ),
-            Place(
+            PlaceDb(
                 code = "code2",
                 name = "abcd",
                 normalisedName = "abcd",
                 countryCode = "countryCode1",
             ),
-            Place(
+            PlaceDb(
                 code = "code3",
                 name = "abcde",
                 normalisedName = "abcde",
                 countryCode = "countryCode1",
             ),
-            Place(
+            PlaceDb(
                 code = "code4",
                 name = "fgh",
                 normalisedName = "fgh",
                 countryCode = "countryCode1",
             ),
-            Place(
+            PlaceDb(
                 code = "code5",
                 name = "fghi",
                 normalisedName = "fghi",
@@ -314,13 +314,13 @@ class PlacesDaoTest : KoinTest{
     @Test
     fun update() {
         val places = listOf(
-            Place(
+            PlaceDb(
                 code = "code1",
                 name = "name1",
                 normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
-            Place(
+            PlaceDb(
                 code = "code2",
                 name = "name2",
                 normalisedName = "name2",
@@ -351,13 +351,13 @@ class PlacesDaoTest : KoinTest{
     @Test
     fun findByCode() {
         val places = listOf(
-            Place(
+            PlaceDb(
                 code = "code1",
                 name = "name1",
                 normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
-            Place(
+            PlaceDb(
                 code = "code2",
                 name = "name2",
                 normalisedName = "name2",
@@ -386,13 +386,13 @@ class PlacesDaoTest : KoinTest{
     @Test
     fun delete() {
         val places = listOf(
-            Place(
+            PlaceDb(
                 code = "code1",
                 name = "name1",
                 normalisedName = "name1",
                 countryCode = "countryCode1"
             ),
-            Place(
+            PlaceDb(
                 code = "code2",
                 name = "name2",
                 normalisedName = "name2",

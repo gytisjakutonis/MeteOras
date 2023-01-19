@@ -11,6 +11,7 @@ data class Forecast(
     data class Timestamp(
         val time: Instant,
         val airTemperature: Double,
+        val feelsTemperature: Double,
         val windSpeed: Int,
         val windGust: Int,
         val windDirection: Int,
@@ -22,18 +23,26 @@ data class Forecast(
     ) {
         enum class Condition(val value: String) {
             Clear("clear"),
-            IsolatedClound("isolated-clouds"),
-            ScatteredClouds("scattered-clouds"),
-            Overcast("overcast"),
+            Cloudy("cloudy"),
+            PartlyCloudy("partly-cloudy"),
+            CloudyWithSunnyIntervals("cloudy-with-sunny-intervals"),
+            Rain("rain"),
             LightRain("light-rain"),
             ModerateRain("moderate-rain"),
             HeavyRain("heavy-rain"),
+            HeavyRainWithThunderstorms("heavy-rain-with-thunderstorms"),
+            FreezingRain("freezing-rain"),
             Sleet("sleet"),
+            LightSleet("light-sleet"),
+            Hail("hail"),
+            Thunder("thunder"),
+            IsolatedThunderstorms("isolated-thunderstorms"),
+            Thunderstorms("thunderstorms"),
+            Snow("snow"),
             LightSnow("light-snow"),
-            ModerateSnow("moderate-snow"),
             HeavySnow("heavy-snow"),
             Fog("fog"),
-            NA("na"),
+            Null("null")
         }
     }
 

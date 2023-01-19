@@ -13,6 +13,7 @@ data class ForecastNet(
     data class Timestamp(
         val forecastTimeUtc: String?,
         val airTemperature: Double?,
+        val feelsLikeTemperature: Double?,
         val windSpeed: Int?,
         val windGust: Int?,
         val windDirection: Int?,

@@ -1,10 +1,13 @@
 package gj.meteoras.net
 
 import android.content.Context
+import gj.meteoras.net.api.MeteoApi
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.io.File
 
@@ -19,11 +22,6 @@ val netModule = module {
             .cache(Cache(File(get<Context>().cacheDir, "http"), NetConfig.cacheSizeBytes))
             .apply {
                 addNetworkInterceptor(
-                    HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BODY
-                    }
-                )
-                addNetworkInterceptor(
                     HttpLoggingInterceptor(
                         logger = { Timber.d(it) }
                     ).apply {
@@ -32,5 +30,17 @@ val netModule = module {
                 )
             }
             .build()
+    }
+
+    single {
+        Retrofit.Builder()
+            .baseUrl(NetConfig.meteoUrl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(get())
+            .build()
+    }
+
+    single {
+        get<Retrofit>().create(MeteoApi::class.java)
     }
 }
