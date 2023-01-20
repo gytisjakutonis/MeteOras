@@ -40,11 +40,6 @@ internal val darkColors = Colors(
     false
 )
 
-val Colors.supplementary: Color
-    get() = Color.LightGray
+val Colors.seed: Color
+    get() = Color(0xFFCE93D8)
 
-val Colors.cold: Color
-    get() = Color(0xFF1565c0)
-
-val Colors.hot: Color
-    get() = Color(0xFFB00020)

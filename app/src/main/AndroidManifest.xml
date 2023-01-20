@@ -17,7 +17,7 @@
             android:exported="false" />
 
         <provider
-            android:name="gj.meteoras.Init"
+            android:name="gj.meteoras.Initializer"
             android:authorities="${applicationId}.appinit"
             android:exported="false" />
 

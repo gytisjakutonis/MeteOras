@@ -21,6 +21,9 @@ interface PlacesDao {
     @Query("SELECT * FROM place WHERE code=:code")
     suspend fun findByCode(code: String): PlaceDb?
 
+    @Query("SELECT * FROM place WHERE code in (:codes)")
+    suspend fun findByCodes(codes: List<String>): List<PlaceDb>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(places: List<PlaceDb>)
 

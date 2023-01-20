@@ -22,9 +22,4 @@ android {
 }
 
 dependencies {
-    // ui
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
-
-    // compose
-    implementation "androidx.compose.material:material:$compose_version"
 }

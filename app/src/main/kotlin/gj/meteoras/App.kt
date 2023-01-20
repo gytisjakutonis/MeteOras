@@ -2,7 +2,6 @@ package gj.meteoras
 
 import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import gj.meteoras.domain.domainModule
 import gj.meteoras.ui.uiModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -22,7 +21,7 @@ class App : Application() {
             logger(TimberLogger())
 
             modules(
-                appModule + domainModule + uiModule
+                appModule + uiModule
             )
         }
     }

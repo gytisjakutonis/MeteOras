@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/net" />
             <option value="$PROJECT_DIR$/repo" />
             <option value="$PROJECT_DIR$/test" />
+            <option value="$PROJECT_DIR$/ui" />
           </set>
         </option>
       </GradleProjectSettings>
