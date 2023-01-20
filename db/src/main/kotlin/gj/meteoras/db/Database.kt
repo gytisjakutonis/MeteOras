@@ -1,6 +1,5 @@
 package gj.meteoras.db
 
-import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -9,12 +8,9 @@ import gj.meteoras.db.dao.PlacesDao
 import gj.meteoras.db.data.PlaceDb
 
 @Database(
-    version = 2,
+    version = 1,
     entities = [PlaceDb::class],
     exportSchema = false,
-    autoMigrations = [
-        AutoMigration(from = 1, to = 2)
-    ]
 )
 @TypeConverters(TimeTypeConverters::class)
 abstract class Database : RoomDatabase() {

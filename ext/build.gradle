@@ -12,12 +12,6 @@ android {
 
     buildFeatures {
         buildConfig false
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.0.1'
-        kotlinCompilerVersion '1.5.21'
     }
 }
 

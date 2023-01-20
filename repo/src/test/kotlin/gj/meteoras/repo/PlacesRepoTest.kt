@@ -95,6 +95,17 @@ class PlacesRepoTest : KoinTest {
     }
 
     @Test
+    fun findPlacesError() {
+        coEvery { placesDao.findByName(any()) } throws RuntimeException()
+
+        val result = runBlocking {
+            repo.filterByName("name",)
+        }
+
+        assertThat(result.isFailure).isTrue
+    }
+
+    @Test
     fun syncPlacesInitial() {
         val timestamp = Instant.ofEpochSecond(0L)
 
@@ -105,6 +116,7 @@ class PlacesRepoTest : KoinTest {
             repo.syncPlaces()
         }
 
+        assertThat(result.isSuccess).isTrue
         coVerify { meteoApi.places() }
         coVerify { placesDao.setAll(any()) }
         verify { repoPreferences setProperty "placesTimestamp" value more(timestamp) }
@@ -121,6 +133,7 @@ class PlacesRepoTest : KoinTest {
             repo.syncPlaces()
         }
 
+        assertThat(result.isSuccess).isTrue
         coVerify { meteoApi.places() }
         coVerify { placesDao.setAll(any()) }
         verify { repoPreferences setProperty "placesTimestamp" value more(timestamp) }
@@ -138,9 +151,26 @@ class PlacesRepoTest : KoinTest {
             repo.syncPlaces()
         }
 
+        assertThat(result.isSuccess).isTrue
         coVerify(exactly = 0) { meteoApi.places() }
         coVerify(exactly = 0) { placesDao.setAll(any()) }
         verify(exactly = 0) { repoPreferences setProperty "placesTimestamp" value more(timestamp) }
+    }
+
+    @Test
+    fun syncPlacesError() {
+        val timestamp = Instant.ofEpochSecond(0L)
+
+        coEvery { meteoApi.places() } throws RuntimeException()
+        coEvery { placesDao.findByName(any()) } returns emptyList()
+        every { repoPreferences.placesTimestamp } returns timestamp
+
+        val result = runBlocking {
+            repo.syncPlaces()
+        }
+
+        assertThat(result.isFailure).isTrue
+        coVerify(exactly = 1) { meteoApi.places() }
     }
 
     @Test
@@ -174,9 +204,9 @@ class PlacesRepoTest : KoinTest {
             repo.getForecast("code")
         }
 
-        assertThat(result).isNotNull
-        assertThat(result?.type).isEqualTo(Forecast.Type.LongTerm)
-        assertThat(result?.timestamps?.size).isEqualTo(1)
+        assertThat(result.isSuccess).isTrue
+        assertThat(result.getOrNull()?.type).isEqualTo(Forecast.Type.LongTerm)
+        assertThat(result.getOrNull()?.timestamps?.size).isEqualTo(1)
     }
 
     @Test
@@ -210,6 +240,17 @@ class PlacesRepoTest : KoinTest {
             repo.getForecast("code")
         }
 
-        assertThat(result).isNotNull
+        assertThat(result.isSuccess).isFalse
+    }
+
+    @Test
+    fun getForecastFailure() {
+        coEvery { meteoApi.forecast(any()) } throws RuntimeException()
+
+        val result = runBlocking {
+            repo.getForecast("code")
+        }
+
+        assertThat(result.isSuccess).isFalse
     }
 }

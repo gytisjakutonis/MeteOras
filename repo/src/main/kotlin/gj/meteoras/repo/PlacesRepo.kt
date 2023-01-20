@@ -3,10 +3,14 @@ package gj.meteoras.repo
 import gj.meteoras.data.Forecast
 import gj.meteoras.data.Place
 import gj.meteoras.db.dao.PlacesDao
+import gj.meteoras.ext.alias
+import gj.meteoras.ext.lang.result
 import gj.meteoras.ext.lang.then
 import gj.meteoras.net.api.MeteoApi
 import gj.meteoras.repo.mappers.toData
 import gj.meteoras.repo.mappers.toDb
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import java.time.Duration
@@ -22,17 +26,35 @@ class PlacesRepo(
     private val api: MeteoApi
 ) {
 
-    suspend fun filterByName(name: String): List<Place> =
-        dao.findByName("$name%").map { it.toData() }
+    var disclaimer: Boolean by alias(preferences::disclaimerAccepted)
+    var favourites: List<String> by alias(preferences::favouritePlaces)
 
-    suspend fun syncPlaces() {
-        checkPlacesTimeout().then {
-            loadPlaces()
+    fun addFavourite(place: Place) {
+        val codes = favourites.toMutableList()
+        codes.remove(place.code)
+        codes.add(0, place.code)
+        favourites = codes.take(RepoConfig.favouritesLimit)
+    }
+
+    suspend fun filterByName(name: String): Result<List<Place>> = result {
+        withContext(Dispatchers.IO) {
+            dao.findByName("$name%").map { it.toData() }
         }
     }
 
-    suspend fun getForecast(code: String): Forecast? =
-        api.forecast(code).toData()
+    suspend fun syncPlaces(): Result<Unit> =  result {
+        withContext(Dispatchers.IO) {
+            checkPlacesTimeout().then {
+                loadPlaces()
+            }
+        }
+    }
+
+    suspend fun getForecast(code: String): Result<Forecast> = result {
+        withContext(Dispatchers.IO) {
+            api.forecast(code).toData()!!
+        }
+    }
 
     private suspend fun checkPlacesTimeout(): Boolean {
         val now = Instant.now()

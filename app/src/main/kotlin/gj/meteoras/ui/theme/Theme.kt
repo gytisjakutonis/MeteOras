@@ -1,7 +1,7 @@
 package gj.meteoras.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -12,15 +12,15 @@ fun Theme(
     content: @Composable () -> Unit,
 ) {
     val systemUiController = rememberSystemUiController()
-    val background = if (darkTheme) darkColors.background else lightColors.background
+    val background = if (darkTheme) darkColors.primary else lightColors.primary
 
     SideEffect {
-        systemUiController.setSystemBarsColor(color = background, darkIcons = !darkTheme)
-        systemUiController.setNavigationBarColor(color = background, darkIcons = !darkTheme)
+        systemUiController.setSystemBarsColor(color = background, darkIcons = darkTheme)
+        systemUiController.setNavigationBarColor(color = background, darkIcons = darkTheme)
     }
 
     MaterialTheme(
-        colors = if (darkTheme) darkColors else lightColors,
+        colorScheme = if (darkTheme) darkColors else lightColors,
         content = content,
     )
 }

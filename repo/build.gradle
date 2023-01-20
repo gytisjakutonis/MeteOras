@@ -17,7 +17,6 @@ dependencies {
     implementation project(path: ':net')
     implementation project(path: ':db')
 
-    // test
     testImplementation project(path: ':test')
     testImplementation "androidx.room:room-runtime:2.5.0"
 }

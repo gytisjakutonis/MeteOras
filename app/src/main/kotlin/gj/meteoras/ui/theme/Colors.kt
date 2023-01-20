@@ -1,45 +1,71 @@
 package gj.meteoras.ui.theme
 
-import androidx.compose.material.Colors
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
-private val primaryWhite = Color(0xFFEFF5EF)
-private val secondaryWhite = Color(0xFFF4F7FA)
-private val primaryBlack = Color(0xFF003300)
-private val secondaryBlack = Color(0xFF003c8f)
+private val seed = Color(0xFF1B5E20)
 
-internal val lightColors = Colors(
-    primary = Color(0xFF1b5e20),
-    primaryVariant = primaryBlack,
-    secondary = Color(0xFF1565c0),
-    secondaryVariant = secondaryBlack,
-    background = primaryWhite,
-    surface = primaryWhite,
-    error = Color(0xFFB00020),
-    onPrimary = primaryWhite,
-    onSecondary = secondaryWhite,
-    onBackground = primaryBlack,
-    onSurface = primaryBlack,
-    onError = primaryWhite,
-    true
+val lightColors = lightColorScheme(
+    primary = Color(0xFF286C2A),
+    onPrimary = Color(0xFFFFFFFF),
+    primaryContainer = Color(0xFFABF5A3),
+    onPrimaryContainer = Color(0xFF002203),
+    secondary = Color(0xFF53634F),
+    onSecondary = Color(0xFFFFFFFF),
+    secondaryContainer = Color(0xFFD6E8CE),
+    onSecondaryContainer = Color(0xFF111F0F),
+    tertiary = Color(0xFF38656A),
+    onTertiary = Color(0xFFFFFFFF),
+    tertiaryContainer = Color(0xFFBCEBF0),
+    onTertiaryContainer = Color(0xFF002023),
+    error = Color(0xFFBA1A1A),
+    errorContainer = Color(0xFFFFDAD6),
+    onError = Color(0xFFFFFFFF),
+    onErrorContainer = Color(0xFF410002),
+    background = Color(0xFFFCFDF6),
+    onBackground = Color(0xFF1A1C19),
+    surface = Color(0xFFFCFDF6),
+    onSurface = Color(0xFF1A1C19),
+    surfaceVariant = Color(0xFFDEE5D8),
+    onSurfaceVariant = Color(0xFF424940),
+    outline = Color(0xFF72796F),
+    inverseOnSurface = Color(0xFFF1F1EB),
+    inverseSurface = Color(0xFF2F312D),
+    inversePrimary = Color(0xFF90D889),
+    surfaceTint = Color(0xFF286C2A),
+    outlineVariant = Color(0xFFC2C9BD),
+    scrim = Color(0xFF000000),
 )
 
-internal val darkColors = Colors(
-    primary = Color(0xFF1b5e20),
-    primaryVariant = primaryBlack,
-    secondary = Color(0xFF1565c0),
-    secondaryVariant = secondaryBlack,
-    background = primaryWhite,
-    surface = primaryWhite,
-    error = Color(0xFFB00020),
-    onPrimary = primaryWhite,
-    onSecondary = primaryWhite,
-    onBackground = primaryBlack,
-    onSurface = primaryBlack,
-    onError = primaryWhite,
-    false
+val darkColors = darkColorScheme(
+    primary = Color(0xFF90D889),
+    onPrimary = Color(0xFF003909),
+    primaryContainer = Color(0xFF085314),
+    onPrimaryContainer = Color(0xFFABF5A3),
+    secondary = Color(0xFFBACCB3),
+    onSecondary = Color(0xFF253423),
+    secondaryContainer = Color(0xFF3B4B38),
+    onSecondaryContainer = Color(0xFFD6E8CE),
+    tertiary = Color(0xFFA0CFD4),
+    onTertiary = Color(0xFF00363B),
+    tertiaryContainer = Color(0xFF1E4D52),
+    onTertiaryContainer = Color(0xFFBCEBF0),
+    error = Color(0xFFFFB4AB),
+    errorContainer = Color(0xFF93000A),
+    onError = Color(0xFF690005),
+    onErrorContainer = Color(0xFFFFDAD6),
+    background = Color(0xFF1A1C19),
+    onBackground = Color(0xFFE2E3DD),
+    surface = Color(0xFF1A1C19),
+    onSurface = Color(0xFFE2E3DD),
+    surfaceVariant = Color(0xFF424940),
+    onSurfaceVariant = Color(0xFFC2C9BD),
+    outline = Color(0xFF8C9388),
+    inverseOnSurface = Color(0xFF1A1C19),
+    inverseSurface = Color(0xFFE2E3DD),
+    inversePrimary = Color(0xFF286C2A),
+    surfaceTint = Color(0xFF90D889),
+    outlineVariant = Color(0xFF424940),
+    scrim = Color(0xFF000000),
 )
-
-val Colors.seed: Color
-    get() = Color(0xFFCE93D8)
-

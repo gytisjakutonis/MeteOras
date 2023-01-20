@@ -15,12 +15,10 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/db" />
-            <option value="$PROJECT_DIR$/domain" />
             <option value="$PROJECT_DIR$/ext" />
             <option value="$PROJECT_DIR$/net" />
             <option value="$PROJECT_DIR$/repo" />
             <option value="$PROJECT_DIR$/test" />
-            <option value="$PROJECT_DIR$/ui" />
           </set>
         </option>
       </GradleProjectSettings>
