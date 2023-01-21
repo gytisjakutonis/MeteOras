@@ -19,9 +19,9 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import gj.meteoras.R
 import gj.meteoras.data.Forecast
 import gj.meteoras.data.Place
-import gj.meteoras.ui.R
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -46,7 +46,8 @@ fun Timestamp(
     }
 
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = time.value,
@@ -76,7 +77,7 @@ fun Timestamp(
             color = when {
                 timestamp.airTemperature <= 0.0 -> coldColor
                 timestamp.airTemperature > 0.0 -> hotColor
-                else -> MaterialTheme.colorScheme.primary
+                else -> MaterialTheme.colorScheme.secondary
             },
             textAlign = TextAlign.End,
             modifier = Modifier.weight(1f)

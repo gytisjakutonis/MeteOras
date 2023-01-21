@@ -1,9 +1,9 @@
 package gj.meteoras.ui.place
 
 import android.content.res.Resources
+import gj.meteoras.R
 import gj.meteoras.data.Place
 import gj.meteoras.repo.PlacesRepo
-import gj.meteoras.ui.R
 import gj.meteoras.ui.theme.SnackbarState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
